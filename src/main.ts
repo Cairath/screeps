@@ -14,6 +14,10 @@ export const loop = ErrorMapper.wrapLoop(() => {
   }
 
   managers.forEach((manager: ClusterManager) => manager.manage());
+
+  for (const creepName in Game.creeps) {
+    Game.creeps[creepName].act();
+  }
 });
 
 console.log("[!] Scripts uploaded");

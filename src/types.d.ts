@@ -1,3 +1,7 @@
+interface Creep {
+  act: Function;
+}
+
 interface CreepMemory {
   cluster: string;
   role: RoleConstant;
@@ -7,13 +11,13 @@ interface CreepMemory {
 interface CreepTask {
   type: TaskConstant;
   objectId: string;
-  destination: Location;
+  destination: RoomPosition;
 }
 
-interface Location {
-  room?: string;
-  x: number;
-  y: number;
+interface CreepRole {
+  name: RoleConstant;
+  body: BodyPartConstant[];
+  act: Function;
 }
 
 interface Room {
