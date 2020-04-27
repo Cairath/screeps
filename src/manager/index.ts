@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 class ClusterManager {
-  cluster: string;
+  cluster: string; // main cluster room with spawns
   // additionalRooms: string[] -- rooms to manage for mining resources. possibly a dictionary or a record of room name,
   // and specifying whether type of management (mining sources / minerals / both / something else???)
 
@@ -16,7 +16,7 @@ class ClusterManager {
     // check if there are any priority jobs, such as gathering loot that is decaying, critical repair etc.
     // construct a list of those jobs grouped by job type / role
 
-    const idleCreeps = _.filter(roomCreeps, (creep: Creep) => creep.memory.task.type !== TASK_IDLE);
+    const idleCreeps = _.filter(roomCreeps, (creep: Creep) => creep.memory.task.type === TASK_IDLE);
 
     if (!idleCreeps || idleCreeps.length === 0) {
       // if there are priority jobs and no idle creep for a given job, grab the most fitting busy creep and make him do that

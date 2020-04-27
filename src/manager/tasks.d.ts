@@ -24,3 +24,24 @@ type CommonTaskConstant = TASK_IDLE | TASK_MOVE | TASK_WITHDRAW;
 type HarvesterTaskConstant = CommonTaskConstant | TASK_HARVEST | TASK_TRANSFER;
 type BuilderTaskConstant = CommonTaskConstant | TASK_BUILD;
 type UpgraderTaskConstant = CommonTaskConstant | TASK_UPGRADE;
+
+type CreepTask = HarvestTask | BuilderTask | ParkTask | IdleTask;
+
+interface BaseTask<T extends TaskConstant> {
+  type: T;
+  next?: CreepTask;
+}
+
+interface HarvestTask extends BaseTask<TASK_HARVEST> {
+  objectId: Id<Source | Deposit | Mineral<MineralConstant>>;
+}
+
+interface BuilderTask extends BaseTask<TASK_BUILD> {
+  objectId: string;
+}
+
+interface ParkTask extends BaseTask<TASK_PARK> {
+  location: RoomPosition;
+}
+
+interface IdleTask extends BaseTask<TASK_IDLE> {}

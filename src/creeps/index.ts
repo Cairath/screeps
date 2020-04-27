@@ -1,10 +1,3 @@
-import { harvester } from "./harvester";
-import { builder } from "./builder";
+import { RoleBodyConfigurations as roleBodies } from "./bodies";
 
-export const Harvester = harvester;
-export const Builder = builder;
-
-export const Roles = {
-  [Harvester.name]: Harvester,
-  [Builder.name]: Builder
-};
+export const RoleBodyConfigurations = roleBodies;
