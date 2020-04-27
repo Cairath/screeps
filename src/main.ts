@@ -1,10 +1,10 @@
 import { ErrorMapper } from "utils/ErrorMapper";
-import Manager from "manager";
+import ClusterManager from "manager";
 
 const managerRooms = ["W7N6"];
-const managers: Manager[] = [];
+const managers: ClusterManager[] = [];
 
-managerRooms.forEach((room: string) => managers.push(new Manager(room)));
+managerRooms.forEach((room: string) => managers.push(new ClusterManager(room)));
 
 export const loop = ErrorMapper.wrapLoop(() => {
   for (const creepName in Memory.creeps) {
@@ -13,7 +13,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
   }
 
-  managers.forEach((manager: Manager) => manager.manage());
+  managers.forEach((manager: ClusterManager) => manager.manage());
 });
 
 console.log("[!] Scripts uploaded");

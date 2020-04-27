@@ -1,6 +1,19 @@
 interface CreepMemory {
-  room: string;
-  working: boolean;
+  cluster: string;
+  role: RoleConstant;
+  task: CreepTask;
+}
+
+interface CreepTask {
+  type: TaskConstant;
+  objectId: string;
+  destination: Location;
+}
+
+interface Location {
+  room?: string;
+  x: number;
+  y: number;
 }
 
 interface Room {
