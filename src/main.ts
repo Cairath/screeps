@@ -1,10 +1,13 @@
 import { ErrorMapper } from "utils/ErrorMapper";
 import ClusterManager from "manager";
+import * as Config from "./game/config";
 
-const managerRooms = ["W7N6"];
+const managerConfigs = Config.CLUSTERS;
 const managers: ClusterManager[] = [];
 
-managerRooms.forEach((room: string) => managers.push(new ClusterManager(room)));
+managerConfigs.forEach((manager: { name: string; room: string }) =>
+  managers.push(new ClusterManager(manager.name, manager.room))
+);
 
 export const loop = ErrorMapper.wrapLoop(() => {
   for (const creepName in Memory.creeps) {
