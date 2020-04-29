@@ -1,5 +1,6 @@
-import { ErrorMapper } from "utils/ErrorMapper";
 import ClusterManager from "manager";
+import "prototypes";
+import { ErrorMapper } from "utils/ErrorMapper";
 import * as Config from "./game/config";
 
 const managerConfigs = Config.CLUSTERS;
