@@ -4,5 +4,6 @@ export const TASK_WITHDRAW: TASK_WITHDRAW = "withdraw";
 export const TASK_TRANSFER: TASK_TRANSFER = "transfer";
 export const TASK_BUILD: TASK_BUILD = "build";
 export const TASK_UPGRADE: TASK_UPGRADE = "upgrade";
+export const TASK_DROP_IN_PLACE: TASK_DROP_IN_PLACE = "drop-in-place";
 export const TASK_IDLE: TASK_IDLE = "idle";
 export const TASK_PARK: TASK_PARK = "park";

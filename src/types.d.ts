@@ -27,4 +27,10 @@ interface Source {
 
 interface SourceMemory {
   accessibleSpots: number;
+  containerId?: Id<StructureContainer>;
+}
+
+interface ClusterInfo {
+  name: string;
+  baseRoom: string;
 }

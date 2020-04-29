@@ -14,6 +14,7 @@ type TASK_TRANSFER = "transfer";
 type TASK_BUILD = "build";
 type TASK_REPAIR = "repair";
 type TASK_UPGRADE = "upgrade";
+type TASK_DROP_IN_PLACE = "drop-in-place";
 
 type TASK_IDLE = "idle";
 type TASK_PARK = "park";
@@ -26,14 +27,17 @@ type TaskConstant =
   | TASK_BUILD
   | TASK_REPAIR
   | TASK_UPGRADE
+  | TASK_DROP_IN_PLACE
   | TASK_IDLE
   | TASK_PARK;
 
-type CreepTask = HarvestTask | BuilderTask | ParkTask | IdleTask | ParkTask;
+type CreepTask = HarvestTask | BuilderTask | TransferTask | DropInPlaceTask | IdleTask | ParkTask;
 
 interface BaseTask<T extends TaskConstant> {
   type: T;
+  repeatable?: boolean;
   next?: CreepTask;
+  fallback?: CreepTask;
 }
 
 interface HarvestTask extends BaseTask<TASK_HARVEST> {
@@ -42,6 +46,16 @@ interface HarvestTask extends BaseTask<TASK_HARVEST> {
 
 interface BuilderTask extends BaseTask<TASK_BUILD> {
   objectId: string;
+}
+
+interface TransferTask extends BaseTask<TASK_TRANSFER> {
+  objectId: string;
+  structureType: StructureConstant;
+  resource: ResourceConstant;
+}
+
+interface DropInPlaceTask extends BaseTask<TASK_DROP_IN_PLACE> {
+  resource: ResourceConstant;
 }
 
 interface ParkTask extends BaseTask<TASK_PARK> {
