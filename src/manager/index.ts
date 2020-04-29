@@ -21,7 +21,10 @@ class ClusterManager {
     // check if there are any priority jobs, such as gathering loot that is decaying, critical repair etc.
     // construct a list of those jobs grouped by job type / role
 
-    const idleCreeps = _.filter(roomCreeps, (creep: Creep) => creep.memory.task.type === TASK_IDLE);
+    const idleCreeps = _.filter(
+      roomCreeps,
+      (creep: Creep) => creep.memory.task.type === TASK_IDLE || creep.memory.task.type === TASK_PARK
+    );
 
     if (!idleCreeps || idleCreeps.length === 0) {
       // if there are priority jobs and no idle creep for a given job, grab the most fitting busy creep and make him do that

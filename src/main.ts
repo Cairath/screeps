@@ -1,3 +1,4 @@
+import "consts";
 import ClusterManager from "manager";
 import "prototypes";
 import { ErrorMapper } from "utils/ErrorMapper";
