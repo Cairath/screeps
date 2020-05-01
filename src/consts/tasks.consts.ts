@@ -7,3 +7,5 @@ export const TASK_UPGRADE: TASK_UPGRADE = "upgrade";
 export const TASK_DROP_IN_PLACE: TASK_DROP_IN_PLACE = "drop-in-place";
 export const TASK_IDLE: TASK_IDLE = "idle";
 export const TASK_PARK: TASK_PARK = "park";
+export const TASK_RECYCLE: TASK_RECYCLE = "recycle";
+export const TASK_RENEW: TASK_RENEW = "renew";
