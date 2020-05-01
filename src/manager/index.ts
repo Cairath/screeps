@@ -1,5 +1,5 @@
-import _ from "lodash";
 import { RoleBodyConfigurations } from "creeps/bodies";
+import _ from "lodash";
 import { TaskFinder } from "./task-finder/TaskFinder";
 
 class ClusterManager {
@@ -29,7 +29,7 @@ class ClusterManager {
     const requestedCreepCount = this.calculateRequiredCreeps();
 
     const requiredSpawns: RoleConstant[] = [];
-    const requiredSuicides: RoleConstant[] = [];
+    const requiredRecycling: RoleConstant[] = [];
     const roles = Object.keys(requestedCreepCount) as RoleConstant[];
 
     for (const role of roles) {
@@ -42,7 +42,7 @@ class ClusterManager {
         }
       } else {
         for (let i = 0; i > diff; i--) {
-          requiredSuicides.push(role);
+          requiredRecycling.push(role);
         }
       }
     }
@@ -79,7 +79,44 @@ class ClusterManager {
       }
     });
 
-    // todo: handle suicides
+    // todo: split to a suicide mission
+    const recycleRoleCount = _.countBy(requiredRecycling, (r: RoleConstant) => r);
+    (Object.keys(recycleRoleCount) as RoleConstant[]).forEach((role: RoleConstant) => {
+      const roleCreeps = _.chain(Game.creeps)
+        .filter(
+          (creep: Creep) =>
+            creep.memory.role === role &&
+            creep.memory.task.type !== TASK_RECYCLE &&
+            creep.memory.task.next?.type !== TASK_RECYCLE
+        )
+        .orderBy((creep: Creep) => creep.ticksToLive, "asc")
+        .value();
+
+      for (let i = 0; i < recycleRoleCount[role]; i++) {
+        const creepToRecycle = roleCreeps.shift();
+        if (!creepToRecycle) {
+          continue;
+        }
+
+        const taskTypesToFinish: TaskConstant[] = [];
+
+        const closestSpawn = creepToRecycle.pos.findClosestByPath(FIND_MY_SPAWNS);
+        if (!closestSpawn) {
+          console.log(`[ERROR]: attempting to recycle ${creepToRecycle.name} but it cannot find a spawn by path.`);
+        } else {
+          const task: RecycleTask = {
+            type: TASK_RECYCLE,
+            spawnId: closestSpawn.id
+          };
+
+          if (taskTypesToFinish.includes(creepToRecycle.memory.task.type)) {
+            creepToRecycle.memory.task.next = task;
+          } else {
+            creepToRecycle.memory.task = task;
+          }
+        }
+      }
+    });
   }
 
   private calculateRequiredCreeps(): Record<RoleConstant, number> {

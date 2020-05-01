@@ -80,9 +80,10 @@ interface ParkTask extends BaseTask<TASK_PARK> {
 interface IdleTask extends BaseTask<TASK_IDLE> {}
 
 interface RecycleTask extends BaseTask<TASK_RECYCLE> {
-  spawnId: string; //Id<Spawn>?
+  spawnId: Id<StructureSpawn>;
+  // todo: possibly have a container at a spawn to die into
 }
 
 interface RenewTask extends BaseTask<TASK_RENEW> {
-  spawnId: string; //Id<Spawn>?
+  spawnId: Id<StructureSpawn>;
 }
