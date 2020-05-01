@@ -39,3 +39,19 @@ Object.defineProperty(Source.prototype, "accessibleSpots", {
   enumerable: false,
   configurable: true
 });
+
+Object.defineProperty(Source.prototype, "containerId", {
+  get: function (this: Source & { _accessibleSpots: number }) {
+    const containersInRange = this.pos
+      .findInRange(FIND_MY_STRUCTURES, 1)
+      .filter(
+        (structure: Structure): structure is StructureContainer => structure.structureType === STRUCTURE_CONTAINER
+      );
+
+    const container = containersInRange.shift();
+
+    return container ? container.id : undefined;
+  },
+  enumerable: false,
+  configurable: true
+});
