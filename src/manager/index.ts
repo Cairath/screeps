@@ -47,11 +47,15 @@ class ClusterManager {
       }
     }
 
+    this.spawnCreeps(requiredSpawns);
+    this.recycleCreeps(requiredRecycling);
+  }
+
+  private spawnCreeps(requiredSpawns: RoleConstant[]): void {
     if (requiredSpawns.length === 0) {
       return;
     }
 
-    // todo: split me to a spawning method
     const spawns = Game.rooms[this.baseRoom].find(FIND_MY_SPAWNS);
     let nextSpawnRole = requiredSpawns.shift();
     let suffix = 0;
@@ -78,8 +82,9 @@ class ClusterManager {
         nextSpawnRole = requiredSpawns.shift();
       }
     });
+  }
 
-    // todo: split to a suicide mission
+  private recycleCreeps(requiredRecycling: RoleConstant[]) {
     const recycleRoleCount = _.countBy(requiredRecycling, (r: RoleConstant) => r);
     (Object.keys(recycleRoleCount) as RoleConstant[]).forEach((role: RoleConstant) => {
       const roleCreeps = _.chain(Game.creeps)
