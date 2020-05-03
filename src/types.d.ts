@@ -35,19 +35,21 @@ interface Mineral {
   memory: DepositMemory;
 }
 
-interface HarvestibleMemory {
+interface HarvestableMemory {
   accessibleSpots: number;
   containerId?: Id<StructureContainer>;
   assignedCreeps: { [creepId: string]: { workParts: number } };
 }
 
-interface SourceMemory extends HarvestibleMemory {}
+interface SourceMemory extends HarvestableMemory {}
 
-interface DepositMemory extends HarvestibleMemory {}
+interface DepositMemory extends HarvestableMemory {}
 
-interface MineralMemory extends HarvestibleMemory {}
+interface MineralMemory extends HarvestableMemory {}
 
 interface ClusterInfo {
   name: string;
   baseRoom: string;
+  sources: { [sourceId: string]: string };
+  minerals: { [mineralId: string]: string };
 }
