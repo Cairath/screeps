@@ -1,8 +1,6 @@
-import * as TaskBuilder from "./task-builders";
+import * as TaskBuilder from "./job-builders";
 
 export class TaskFinder {
-  static roles: RoleConstant[] = [ROLE_HARVESTER, ROLE_UPGRADER, ROLE_CARRIER, ROLE_BUILDER];
-
   private clusterInfo: ClusterInfo;
 
   constructor(cluster: ClusterInfo) {
@@ -10,21 +8,11 @@ export class TaskFinder {
   }
 
   assignTasks() {
-    let harvesterTasks = TaskBuilder.BuildHarvesterTasks(this.clusterInfo);
-    let builderTasks = TaskBuilder.BuildBuilderTasks(this.clusterInfo);
-    let carrierTasks = TaskBuilder.BuildCarrierTasks(this.clusterInfo);
-    let upgraderTasks = TaskBuilder.BuildUpgraderTasks(this.clusterInfo);
+    let harvesterJobs = TaskBuilder.BuildHarvesterJobList(this.clusterInfo);
+    // todo: assign creep to source when assigning it a task!
+    let builderJobs = TaskBuilder.BuildBuilderJobList(this.clusterInfo);
+    let carrierJobs = TaskBuilder.BuildCarrierJobList(this.clusterInfo);
   }
-
-  // static findPriorityTasks(): Partial<Record<RoleConstant, CreepTask[]>> {
-  //   /*
-  //   - tombstones
-  //   - ruins
-  //   - critical repairs
-
-  //   */
-  //   return {};
-  // }
 
   // static assignTasks(creeps: Creep[]) {
   //   let priorityTasks = this.findPriorityTasks();

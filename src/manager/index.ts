@@ -1,5 +1,5 @@
 import { RoleBodyConfigurations } from "creeps/bodies";
-import _ from "lodash";
+import _, { Dictionary } from "lodash";
 import { TaskFinder } from "./task-finder/TaskFinder";
 
 class ClusterManager {
@@ -9,10 +9,29 @@ class ClusterManager {
   // additionalRooms: string[] -- rooms to manage for mining resources. possibly a dictionary or a record of room name,
   // and specifying whether type of management (mining sources / minerals / both / something else???)
 
+  sources: Dictionary<string>;
+  minerals: Dictionary<string>;
+
   constructor(name: string, room: string) {
     this.name = name;
     this.baseRoom = room;
-    this.taskFinder = new TaskFinder({ name: this.name, baseRoom: this.baseRoom });
+
+    // todo: move this. handle additional rooms.
+    this.sources = {};
+    this.minerals = {};
+    Game.rooms[this.baseRoom].find(FIND_SOURCES).map((source: Source) => {
+      this.sources[source.id] = source.room.name;
+    });
+    Game.rooms[this.baseRoom].find(FIND_MINERALS).map((mineral: Mineral) => {
+      this.minerals[mineral.id] = mineral.room!.name;
+    });
+
+    this.taskFinder = new TaskFinder({
+      name: this.name,
+      baseRoom: this.baseRoom,
+      sources: this.sources,
+      minerals: this.minerals
+    });
   }
 
   manage() {
@@ -74,9 +93,10 @@ class ClusterManager {
       };
 
       const name = `${nextSpawnRole}-${this.name}-${Game.time}${suffix++}`;
+      const tier = 2;
 
-      if (spawn.spawnCreep(RoleBodyConfigurations[nextSpawnRole], name, { ...opts, dryRun: true }) === OK) {
-        spawn.spawnCreep(RoleBodyConfigurations[nextSpawnRole], name, opts);
+      if (spawn.spawnCreep(RoleBodyConfigurations[nextSpawnRole][tier], name, { ...opts, dryRun: true }) === OK) {
+        spawn.spawnCreep(RoleBodyConfigurations[nextSpawnRole][tier], name, opts);
         console.log(`Spawning new ${nextSpawnRole}: ` + name);
 
         nextSpawnRole = requiredSpawns.shift();
@@ -129,7 +149,6 @@ class ClusterManager {
     return {
       [ROLE_BUILDER]: 1,
       [ROLE_HARVESTER]: 1,
-      [ROLE_UPGRADER]: 1,
       [ROLE_CARRIER]: 1
     };
   }
