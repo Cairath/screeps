@@ -7,6 +7,7 @@ export const act = (creep: Creep) => {
   switch (task.type) {
     case TASK_HARVEST: {
       result = harvest(creep, task);
+      // todo: if source is empty and has long time to renew left, possibly unassign the creep?
       break;
     }
     case TASK_TRANSFER: {
@@ -37,6 +38,30 @@ export const act = (creep: Creep) => {
       }
 
       currTask.next = task;
+    }
+
+    if (task.type === TASK_HARVEST && !task.repeatable) {
+      let currTask: CreepTask | undefined = newTask;
+      let foundAnotherSource = false;
+      do {
+        if (currTask.type === TASK_HARVEST && currTask.objectId !== task.objectId) {
+          foundAnotherSource = true;
+          break;
+        }
+
+        currTask = currTask.next;
+      } while (currTask);
+
+      if (foundAnotherSource) {
+        const currentSource = Game.getObjectById(task.objectId);
+        if (currentSource instanceof Source) {
+          delete Memory.sources[currentSource.id].assignedCreeps[creep.id];
+        } else if (currentSource instanceof Deposit) {
+          delete Memory.deposits[currentSource.id].assignedCreeps[creep.id];
+        } else if (currentSource instanceof Mineral) {
+          delete Memory.minerals[currentSource.id].assignedCreeps[creep.id];
+        }
+      }
     }
 
     creep.memory.task = newTask;

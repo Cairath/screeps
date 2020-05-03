@@ -15,6 +15,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
   for (const creepName in Memory.creeps) {
     if (!(creepName in Game.creeps)) {
       delete Memory.creeps[creepName];
+      // todo: also delete creep assignments, e.g. to sources, in case the creep died without properly dropping the task
     }
   }
 
