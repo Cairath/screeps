@@ -4,10 +4,15 @@ declare const TASK_WITHDRAW: TASK_WITHDRAW;
 declare const TASK_TRANSFER: TASK_TRANSFER;
 declare const TASK_BUILD: TASK_BUILD;
 declare const TASK_UPGRADE: TASK_UPGRADE;
+declare const TASK_DROP_IN_PLACE: TASK_DROP_IN_PLACE;
 declare const TASK_IDLE: TASK_IDLE;
 declare const TASK_PARK: TASK_PARK;
 declare const TASK_RECYCLE: TASK_RECYCLE;
 declare const TASK_RENEW: TASK_RENEW;
+
+declare const PRIORITY_HIGH: PRIORITY_HIGH;
+declare const PRIORITY_NORMAL: PRIORITY_NORMAL;
+declare const PRIORITY_LOW: PRIORITY_LOW;
 
 type TASK_MOVE = "move";
 type TASK_HARVEST = "harvest";
@@ -48,6 +53,14 @@ type CreepTask =
   | RecycleTask
   | RenewTask;
 
+type Job = HarvestJob;
+
+type JobPriority = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
+
+type PRIORITY_HIGH = 2;
+type PRIORITY_NORMAL = 1;
+type PRIORITY_LOW = 0;
+
 interface BaseTask<T extends TaskConstant> {
   type: T;
   repeatable?: boolean;
@@ -55,8 +68,22 @@ interface BaseTask<T extends TaskConstant> {
   fallback?: CreepTask;
 }
 
+interface BaseJob<T extends TaskConstant> {
+  type: T;
+  priority: JobPriority;
+  repeatable?: boolean;
+  nextTask?: CreepTask;
+  fallbackTask?: CreepTask;
+}
+
 interface HarvestTask extends BaseTask<TASK_HARVEST> {
   objectId: Id<Source | Deposit | Mineral<MineralConstant>>;
+}
+
+interface HarvestJob extends BaseJob<TASK_HARVEST> {
+  objectId: Id<Source | Deposit | Mineral<MineralConstant>>;
+  spotsAvailable: number;
+  workPartsNeeded: number;
 }
 
 interface BuilderTask extends BaseTask<TASK_BUILD> {

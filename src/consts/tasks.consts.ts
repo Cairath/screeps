@@ -9,3 +9,6 @@ export const TASK_IDLE: TASK_IDLE = "idle";
 export const TASK_PARK: TASK_PARK = "park";
 export const TASK_RECYCLE: TASK_RECYCLE = "recycle";
 export const TASK_RENEW: TASK_RENEW = "renew";
+export const PRIORITY_HIGH: PRIORITY_HIGH = 2;
+export const PRIORITY_NORMAL: PRIORITY_NORMAL = 1;
+export const PRIORITY_LOW: PRIORITY_LOW = 0;
