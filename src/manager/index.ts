@@ -1,5 +1,5 @@
 import { RoleBodyConfigurations } from "creeps/bodies";
-import _, { Dictionary } from "lodash";
+import _ from "lodash";
 import { TaskFinder } from "./task-finder/TaskFinder";
 
 class ClusterManager {
@@ -9,21 +9,21 @@ class ClusterManager {
   // additionalRooms: string[] -- rooms to manage for mining resources. possibly a dictionary or a record of room name,
   // and specifying whether type of management (mining sources / minerals / both / something else???)
 
-  sources: Dictionary<string>;
-  minerals: Dictionary<string>;
+  sources: Map<Id<Source>, string>;
+  minerals: Map<Id<Mineral>, string>;
 
   constructor(name: string, room: string) {
     this.name = name;
     this.baseRoom = room;
 
     // todo: move this. handle additional rooms.
-    this.sources = {};
-    this.minerals = {};
+    this.sources = new Map();
+    this.minerals = new Map();
     Game.rooms[this.baseRoom].find(FIND_SOURCES).map((source: Source) => {
-      this.sources[source.id] = source.room.name;
+      this.sources.set(source.id, source.room.name);
     });
     Game.rooms[this.baseRoom].find(FIND_MINERALS).map((mineral: Mineral) => {
-      this.minerals[mineral.id] = mineral.room!.name;
+      this.minerals.set(mineral.id, mineral.room.name);
     });
 
     this.taskFinder = new TaskFinder({

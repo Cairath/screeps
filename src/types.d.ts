@@ -33,12 +33,28 @@ interface Deposit {
 
 interface Mineral {
   memory: DepositMemory;
+  room: Room;
 }
 
 interface HarvestableMemory {
+  /**
+   * Number of accessible non-wall spots around the harvestable.
+   */
   accessibleSpots: number;
+
+  /**
+   * Id of a Container (if exists) within radius of 1 around the harvestable.
+   */
   containerId?: Id<StructureContainer>;
-  assignedCreeps: { [creepId: string]: { workParts: number } };
+
+  /**
+   * Creeps currently assigned to harvest this harvestable.
+   */
+  assignedCreeps: { [creepId: string]: HarvestableCreepAssignment };
+}
+
+interface HarvestableCreepAssignment {
+  workParts: number;
 }
 
 interface SourceMemory extends HarvestableMemory {}
@@ -50,6 +66,6 @@ interface MineralMemory extends HarvestableMemory {}
 interface ClusterInfo {
   name: string;
   baseRoom: string;
-  sources: { [sourceId: string]: string };
-  minerals: { [mineralId: string]: string };
+  sources: Map<Id<Source>, string>;
+  minerals: Map<Id<Mineral>, string>;
 }
