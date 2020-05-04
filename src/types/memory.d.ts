@@ -23,7 +23,7 @@ interface HarvestableMemory {
   /**
    * Id of a Container (if exists) within radius of 1 around the harvestable.
    */
-  containerId?: Id<StructureContainer>;
+  containerId: Id<StructureContainer> | null;
 
   /**
    * Creeps currently assigned to harvest this harvestable.

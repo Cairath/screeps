@@ -41,16 +41,18 @@ Object.defineProperty(Mineral.prototype, "accessibleSpots", {
 });
 
 Object.defineProperty(Mineral.prototype, "containerId", {
-  get: function (this: Mineral & { _accessibleSpots: number }) {
-    const containersInRange = this.pos
-      .findInRange(FIND_MY_STRUCTURES, 1)
-      .filter(
-        (structure: Structure): structure is StructureContainer => structure.structureType === STRUCTURE_CONTAINER
-      );
+  get: function (this: Mineral & { _containerId: Id<StructureContainer> | null }) {
+    if (this._containerId === undefined) {
+      const containersInRange = this.pos
+        .findInRange(FIND_STRUCTURES, 1)
+        .filter(
+          (structure: Structure): structure is StructureContainer => structure.structureType === STRUCTURE_CONTAINER
+        );
 
-    const container = containersInRange.shift();
-
-    return container ? container.id : undefined;
+      const container = containersInRange.shift();
+      this._containerId = container ? container.id : null;
+    }
+    return this._containerId;
   },
   enumerable: false,
   configurable: true
