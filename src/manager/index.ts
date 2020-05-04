@@ -52,7 +52,7 @@ class ClusterManager {
     const roles = Object.keys(requestedCreepCount) as RoleConstant[];
 
     for (const role of roles) {
-      const diff = requestedCreepCount[role] - aliveCreepCount[role];
+      const diff = requestedCreepCount[role] - (aliveCreepCount[role] ?? 0);
 
       if (diff > 0) {
         for (let i = 0; i < diff; i++) {
@@ -149,9 +149,9 @@ class ClusterManager {
   private calculateRequiredCreeps(): Record<RoleConstant, number> {
     // todo: actual calculations
     return {
-      [ROLE_BUILDER]: 1,
+      [ROLE_BUILDER]: 0,
       [ROLE_HARVESTER]: 1,
-      [ROLE_CARRIER]: 1
+      [ROLE_CARRIER]: 0
     };
   }
 }

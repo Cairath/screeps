@@ -5,22 +5,16 @@ Creep.prototype.act = function () {
 };
 
 Object.defineProperty(Creep.prototype, "isFull", {
-  get: function (this: Creep & { _isFull: boolean }) {
-    if (!this._isFull) {
-      this._isFull = this.store.getUsedCapacity() === this.carryCapacity;
-    }
-    return this._isFull;
+  get: function (this: Creep) {
+    return this.store.getUsedCapacity() === this.carryCapacity;
   },
   enumerable: false,
   configurable: true
 });
 
 Object.defineProperty(Creep.prototype, "isIdle", {
-  get: function (this: Creep & { _isIdle: boolean }) {
-    if (!this._isIdle) {
-      this._isIdle = this.memory.task.type === TASK_IDLE || this.memory.task.type === TASK_PARK;
-    }
-    return this._isIdle;
+  get: function (this: Creep) {
+    return this.memory.task.type === TASK_IDLE || this.memory.task.type === TASK_PARK;
   },
   enumerable: false,
   configurable: true

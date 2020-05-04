@@ -16,6 +16,7 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
 
   const sourcesAndMinerals = { ...sources, ...minerals };
 
+  // prioritize sources with containers?
   _.forEach(Object.keys(sourcesAndMinerals), (id: string) => {
     const harvestable = Game.getObjectById<Source | Mineral>(id);
 
@@ -43,7 +44,11 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
         type: TASK_TRANSFER,
         objectId: containerId,
         resource: RESOURCE_ENERGY,
-        structureType: STRUCTURE_CONTAINER
+        structureType: STRUCTURE_CONTAINER,
+        fallback: {
+          type: TASK_DROP_IN_PLACE,
+          resource: RESOURCE_ENERGY
+        }
       };
     } else {
       nextTask = {
@@ -58,7 +63,8 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
       repeatable: true,
       objectId: harvestable.id,
       spotsAvailable: availableSpots,
-      workPartsNeeded: MAX_WORKING_PARTS - workingParts
+      workPartsNeeded: MAX_WORKING_PARTS - workingParts,
+      nextTask: nextTask
     };
 
     jobs.push(job);
@@ -66,7 +72,7 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
 
   jobs = _.orderBy(jobs, (j: Job) => j.priority, "desc");
 
-  console.log("Harvester jobs: " + JSON.stringify(jobs, null, 2));
+  //  console.log("Harvester jobs: " + JSON.stringify(jobs, null, 2));
 
   return jobs;
 }

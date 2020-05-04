@@ -7,7 +7,7 @@ Object.defineProperty(Deposit.prototype, "memory", {
     if (!_.isObject(Memory.deposits)) {
       return undefined;
     }
-    return (Memory.deposits[this.id] = Memory.deposits[this.id] ?? {});
+    return (Memory.deposits[this.id] = Memory.deposits[this.id] ?? { assignedCreeps: {} });
   },
   set: function (value: DepositMemory) {
     if (_.isUndefined(Memory.deposits)) {

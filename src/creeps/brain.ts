@@ -1,9 +1,11 @@
 import { harvest } from "./actions/harvest.action";
 import { transfer } from "./actions/transfer.action";
+import { dropInPlace } from "./actions/drop-in-place.action";
+import _ from "lodash";
 
 export const act = (creep: Creep) => {
   const task = creep.memory.task;
-  let result: ActionReturnCode = ACTION_OK;
+  let result: ActionReturnCode = ACTION_CONT;
   switch (task.type) {
     case TASK_HARVEST: {
       result = harvest(creep, task);
@@ -19,9 +21,13 @@ export const act = (creep: Creep) => {
 
       break;
     }
+    case TASK_DROP_IN_PLACE: {
+      result = dropInPlace(creep, task);
+      break;
+    }
   }
 
-  if (result !== ACTION_OK) {
+  if (result !== ACTION_CONT) {
     let newTask: CreepTask;
 
     if (result === ACTION_ERR_USE_FALLBACK && task.fallback) {
@@ -37,20 +43,21 @@ export const act = (creep: Creep) => {
         currTask = currTask.next;
       }
 
-      currTask.next = task;
+      currTask.next = _.cloneDeep(task);
     }
 
     if (task.type === TASK_HARVEST && !task.repeatable) {
       let currTask: CreepTask | undefined = newTask;
       let foundAnotherSource = false;
-      do {
+
+      while (currTask) {
         if (currTask.type === TASK_HARVEST && currTask.objectId !== task.objectId) {
           foundAnotherSource = true;
           break;
         }
 
         currTask = currTask.next;
-      } while (currTask);
+      }
 
       if (foundAnotherSource) {
         const currentSource = Game.getObjectById(task.objectId);

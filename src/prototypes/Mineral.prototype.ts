@@ -7,7 +7,7 @@ Object.defineProperty(Mineral.prototype, "memory", {
     if (!_.isObject(Memory.minerals)) {
       return undefined;
     }
-    return (Memory.minerals[this.id] = Memory.minerals[this.id] ?? {});
+    return (Memory.minerals[this.id] = Memory.minerals[this.id] ?? { assignedCreeps: {} });
   },
   set: function (value: MineralMemory) {
     if (_.isUndefined(Memory.minerals)) {

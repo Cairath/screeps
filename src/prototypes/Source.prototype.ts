@@ -7,7 +7,7 @@ Object.defineProperty(Source.prototype, "memory", {
     if (!_.isObject(Memory.sources)) {
       return undefined;
     }
-    return (Memory.sources[this.id] = Memory.sources[this.id] ?? {});
+    return (Memory.sources[this.id] = Memory.sources[this.id] ?? { assignedCreeps: {} });
   },
   set: function (value: SourceMemory) {
     if (_.isUndefined(Memory.sources)) {

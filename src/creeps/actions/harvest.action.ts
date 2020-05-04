@@ -1,11 +1,7 @@
 export const harvest = (
   creep: Creep,
   task: HarvestTask
-): ACTION_OK | ACTION_ERR_FULL | ACTION_ERR_NOT_ENOUGH_RESOURCES | ACTION_ERR_NOT_FOUND => {
-  if (creep.isFull) {
-    return ACTION_ERR_FULL;
-  }
-
+): ACTION_DONE | ACTION_CONT | ACTION_ERR_FULL | ACTION_ERR_NOT_ENOUGH_RESOURCES | ACTION_ERR_NOT_FOUND => {
   const deposit = Game.getObjectById(task.objectId);
   if (deposit === null) {
     return ACTION_ERR_NOT_FOUND;
@@ -18,5 +14,9 @@ export const harvest = (
     return ACTION_ERR_NOT_ENOUGH_RESOURCES;
   }
 
-  return ACTION_OK;
+  if (creep.isFull) {
+    return ACTION_DONE;
+  }
+
+  return ACTION_CONT;
 };
