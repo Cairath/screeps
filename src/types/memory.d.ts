@@ -2,6 +2,7 @@ interface Memory {
   sources: { [id: string]: SourceMemory };
   deposits: { [id: string]: DepositMemory };
   minerals: { [id: string]: MineralMemory };
+  storages: { [id: string]: StoreStructureMemory };
 }
 
 interface RoomMemory {
@@ -36,3 +37,19 @@ interface SourceMemory extends HarvestableMemory {}
 interface DepositMemory extends HarvestableMemory {}
 
 interface MineralMemory extends HarvestableMemory {}
+
+interface StructureWithStoreMemory {
+  /**
+   * Storage mode to be used in building carrier tasks.
+   * @warning Do not use directly. Use `structure.storageMode` to trigger initialization correctly.
+   */
+  storageMode: StorageModeConstant;
+}
+
+interface StorageMemory extends StructureWithStoreMemory {}
+
+interface ContainerMemory extends StructureWithStoreMemory {}
+
+interface LinkMemory extends StructureWithStoreMemory {}
+
+type StoreStructureMemory = StorageMemory | ContainerMemory | LinkMemory;

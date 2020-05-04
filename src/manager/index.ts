@@ -19,7 +19,7 @@ class ClusterManager {
     // todo: move this. handle additional rooms.
     this.sources = new Map();
     this.minerals = new Map();
-    Game.rooms[this.baseRoom].find(FIND_SOURCES).map((source: Source) => {
+    Game.rooms[this.baseRoom].sources.map((source: Source) => {
       this.sources.set(source.id, source.room.name);
     });
     Game.rooms[this.baseRoom].find(FIND_MINERALS).map((mineral: Mineral) => {

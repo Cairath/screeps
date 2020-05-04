@@ -51,7 +51,12 @@ Object.defineProperty(Source.prototype, "containerId", {
 
       const container = containersInRange.shift();
       this._containerId = container ? container.id : null;
+
+      if (container) {
+        container.storageMode = STORAGE_MODE_EMPTY;
+      }
     }
+
     return this._containerId;
   },
   enumerable: false,

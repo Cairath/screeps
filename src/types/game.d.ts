@@ -20,3 +20,18 @@ interface Mineral {
   memory: DepositMemory;
   room: Room;
 }
+
+interface StructureContainer {
+  memory: ContainerMemory;
+  storageMode: StorageModeConstant;
+}
+
+interface StructureLink {
+  memory: LinkMemory;
+  storageMode: StorageModeConstant;
+}
+
+interface StructureStorage {
+  memory: StorageMemory;
+  storageMode: StorageModeConstant;
+}

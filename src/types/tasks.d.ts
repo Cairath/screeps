@@ -14,6 +14,10 @@ declare const PRIORITY_HIGH: PRIORITY_HIGH;
 declare const PRIORITY_NORMAL: PRIORITY_NORMAL;
 declare const PRIORITY_LOW: PRIORITY_LOW;
 
+declare const STORAGE_MODE_FILL: STORAGE_MODE_FILL;
+declare const STORAGE_MODE_EMPTY: STORAGE_MODE_EMPTY;
+declare const STORAGE_MODE_NORMAL: STORAGE_MODE_NORMAL;
+
 type TASK_MOVE = "move";
 type TASK_HARVEST = "harvest";
 type TASK_WITHDRAW = "withdraw";
@@ -55,11 +59,15 @@ type CreepTask =
 
 type Job = HarvestJob | BuildJob;
 
-type JobPriority = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
-
+type JobPriorityConstant = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
 type PRIORITY_HIGH = 2;
 type PRIORITY_NORMAL = 1;
 type PRIORITY_LOW = 0;
+
+type StorageModeConstant = STORAGE_MODE_EMPTY | STORAGE_MODE_FILL | STORAGE_MODE_NORMAL;
+type STORAGE_MODE_FILL = "fill";
+type STORAGE_MODE_EMPTY = "empty";
+type STORAGE_MODE_NORMAL = "normal";
 
 interface BaseTask<T extends TaskConstant> {
   type: T;
@@ -70,7 +78,7 @@ interface BaseTask<T extends TaskConstant> {
 
 interface BaseJob<T extends TaskConstant> {
   type: T;
-  priority: JobPriority;
+  priority: JobPriorityConstant;
   repeatable?: boolean;
   nextTask?: CreepTask;
   fallbackTask?: CreepTask;
