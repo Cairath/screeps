@@ -9,21 +9,21 @@ class ClusterManager {
   // additionalRooms: string[] -- rooms to manage for mining resources. possibly a dictionary or a record of room name,
   // and specifying whether type of management (mining sources / minerals / both / something else???)
 
-  sources: Map<Id<Source>, string>;
-  minerals: Map<Id<Mineral>, string>;
+  sources: { [sourceId: string]: string } = {};
+  minerals: { [mineralId: string]: string } = {};
 
   constructor(name: string, room: string) {
     this.name = name;
     this.baseRoom = room;
 
     // todo: move this. handle additional rooms.
-    this.sources = new Map();
-    this.minerals = new Map();
+
     Game.rooms[this.baseRoom].sources.map((source: Source) => {
-      this.sources.set(source.id, source.room.name);
+      this.sources[source.id] = source.room.name;
     });
+
     Game.rooms[this.baseRoom].find(FIND_MINERALS).map((mineral: Mineral) => {
-      this.minerals.set(mineral.id, mineral.room.name);
+      this.minerals[mineral.id] = mineral.room.name;
     });
 
     this.taskFinder = new TaskFinder({

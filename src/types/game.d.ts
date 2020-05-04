@@ -8,30 +8,36 @@ interface Room {
   sources: Source[];
 }
 
-interface Source {
+interface Harvestable {
+  accessibleSpots: number;
+  containerId: Id<StructureContainer> | null;
+}
+
+interface Source extends Harvestable {
   memory: SourceMemory;
 }
 
-interface Deposit {
+interface Deposit extends Harvestable {
   memory: DepositMemory;
 }
 
-interface Mineral {
+interface Mineral extends Harvestable {
   memory: DepositMemory;
   room: Room;
 }
 
-interface StructureContainer {
+interface StructureWithStore {
+  storageMode: StorageModeConstant;
+}
+
+interface StructureContainer extends StructureWithStore {
   memory: ContainerMemory;
-  storageMode: StorageModeConstant;
 }
 
-interface StructureLink {
+interface StructureLink extends StructureWithStore {
   memory: LinkMemory;
-  storageMode: StorageModeConstant;
 }
 
-interface StructureStorage {
+interface StructureStorage extends StructureWithStore {
   memory: StorageMemory;
-  storageMode: StorageModeConstant;
 }

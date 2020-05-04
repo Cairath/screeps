@@ -5,6 +5,6 @@ interface HarvestableCreepAssignment {
 interface ClusterInfo {
   name: string;
   baseRoom: string;
-  sources: Map<Id<Source>, string>;
-  minerals: Map<Id<Mineral>, string>;
+  sources: { [sourceId: string]: string };
+  minerals: { [mineralId: string]: string };
 }

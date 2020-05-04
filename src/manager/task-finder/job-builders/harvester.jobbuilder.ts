@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import _ from "lodash";
 
 const MAX_WORKING_PARTS = 11;
 
@@ -24,7 +24,7 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
       return;
     }
 
-    const availableSpots = harvestable.memory.accessibleSpots - _.size(harvestable.memory.assignedCreeps);
+    const availableSpots = harvestable.accessibleSpots - _.size(harvestable.memory.assignedCreeps);
 
     if (availableSpots < 1) {
       return;
@@ -35,7 +35,7 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
       return;
     }
 
-    const containerId = harvestable.memory.containerId;
+    const containerId = harvestable.containerId;
     let nextTask: CreepTask;
 
     if (containerId) {
@@ -65,5 +65,8 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
   });
 
   jobs = _.orderBy(jobs, (j: Job) => j.priority, "desc");
+
+  console.log("Harvester jobs: " + JSON.stringify(jobs, null, 2));
+
   return jobs;
 }
