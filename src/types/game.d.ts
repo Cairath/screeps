@@ -1,6 +1,7 @@
 interface Creep {
   act: Function;
   isFull: boolean;
+  isIdle: boolean;
 }
 
 interface Room {

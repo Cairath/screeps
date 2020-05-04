@@ -14,3 +14,14 @@ Object.defineProperty(Creep.prototype, "isFull", {
   enumerable: false,
   configurable: true
 });
+
+Object.defineProperty(Creep.prototype, "isIdle", {
+  get: function (this: Creep & { _isIdle: boolean }) {
+    if (!this._isIdle) {
+      this._isIdle = this.memory.task.type === TASK_IDLE || this.memory.task.type === TASK_PARK;
+    }
+    return this._isIdle;
+  },
+  enumerable: false,
+  configurable: true
+});
