@@ -21,7 +21,9 @@ Object.defineProperty(StructureContainer.prototype, "memory", {
 });
 
 Object.defineProperty(StructureContainer.prototype, "storageMode", {
-  get: function (this: StructureContainer & { _storageMode: StorageModeConstant }) {
+  get: function (
+    this: StructureContainer & { _storageMode: StorageModeConstant } & { memory: { storageMode: StorageModeConstant } }
+  ) {
     if (!this._storageMode) {
       if (!this.memory.storageMode) {
         this.memory.storageMode = STORAGE_MODE_NORMAL;

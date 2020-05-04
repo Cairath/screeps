@@ -5,9 +5,7 @@ interface Memory {
   storages: { [id: string]: StoreStructureMemory };
 }
 
-interface RoomMemory {
-  sourceIds: Id<Source>[];
-}
+interface RoomMemory {}
 
 interface CreepMemory {
   cluster: string;
@@ -16,16 +14,6 @@ interface CreepMemory {
 }
 
 interface HarvestableMemory {
-  /**
-   * Number of accessible non-wall spots around the harvestable.
-   */
-  accessibleSpots: number;
-
-  /**
-   * Id of a Container (if exists) within radius of 1 around the harvestable.
-   */
-  containerId: Id<StructureContainer> | null;
-
   /**
    * Creeps currently assigned to harvest this harvestable.
    */
@@ -38,13 +26,7 @@ interface DepositMemory extends HarvestableMemory {}
 
 interface MineralMemory extends HarvestableMemory {}
 
-interface StructureWithStoreMemory {
-  /**
-   * Storage mode to be used in building carrier tasks.
-   * @warning Do not use directly. Use `structure.storageMode` to trigger initialization correctly.
-   */
-  storageMode: StorageModeConstant;
-}
+interface StructureWithStoreMemory {}
 
 interface StorageMemory extends StructureWithStoreMemory {}
 

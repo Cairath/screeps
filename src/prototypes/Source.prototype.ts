@@ -21,7 +21,7 @@ Object.defineProperty(Source.prototype, "memory", {
 });
 
 Object.defineProperty(Source.prototype, "accessibleSpots", {
-  get: function (this: Source & { _accessibleSpots: number }) {
+  get: function (this: Source & { _accessibleSpots: number } & { memory: { accessibleSpots: number } }) {
     if (this._accessibleSpots === undefined) {
       if (this.memory.accessibleSpots === undefined) {
         let freeSpaceCount = 0;

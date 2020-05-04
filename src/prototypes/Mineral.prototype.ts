@@ -21,7 +21,7 @@ Object.defineProperty(Mineral.prototype, "memory", {
 });
 
 Object.defineProperty(Mineral.prototype, "accessibleSpots", {
-  get: function (this: Mineral & { _accessibleSpots: number }) {
+  get: function (this: Mineral & { _accessibleSpots: number } & { memory: { accessibleSpots: number } }) {
     if (this._accessibleSpots === undefined) {
       if (this.memory.accessibleSpots === undefined) {
         let freeSpaceCount = 0;

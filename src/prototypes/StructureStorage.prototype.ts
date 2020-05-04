@@ -21,7 +21,9 @@ Object.defineProperty(StructureStorage.prototype, "memory", {
 });
 
 Object.defineProperty(StructureStorage.prototype, "storageMode", {
-  get: function (this: StructureStorage & { _storageMode: StorageModeConstant }) {
+  get: function (
+    this: StructureStorage & { _storageMode: StorageModeConstant } & { memory: { storageMode: StorageModeConstant } }
+  ) {
     if (!this._storageMode) {
       if (!this.memory.storageMode) {
         this.memory.storageMode = STORAGE_MODE_NORMAL;

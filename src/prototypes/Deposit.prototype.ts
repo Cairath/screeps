@@ -21,7 +21,7 @@ Object.defineProperty(Deposit.prototype, "memory", {
 });
 
 Object.defineProperty(Deposit.prototype, "accessibleSpots", {
-  get: function (this: Deposit & { _accessibleSpots: number }) {
+  get: function (this: Deposit & { _accessibleSpots: number } & { memory: { accessibleSpots: number } }) {
     if (this._accessibleSpots === undefined) {
       if (this.memory.accessibleSpots === undefined) {
         let freeSpaceCount = 0;
