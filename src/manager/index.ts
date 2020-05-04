@@ -134,6 +134,8 @@ class ClusterManager {
             spawnId: closestSpawn.id
           };
 
+          // todo: if a "suicide container" is available next to the spawn, go there.
+
           if (taskTypesToFinish.includes(creepToRecycle.memory.task.type)) {
             creepToRecycle.memory.task.next = task;
           } else {

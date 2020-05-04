@@ -45,7 +45,7 @@ type TaskConstant =
 
 type CreepTask =
   | HarvestTask
-  | BuilderTask
+  | BuildTask
   | TransferTask
   | DropInPlaceTask
   | IdleTask
@@ -53,7 +53,7 @@ type CreepTask =
   | RecycleTask
   | RenewTask;
 
-type Job = HarvestJob;
+type Job = HarvestJob | BuildJob;
 
 type JobPriority = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
 
@@ -86,8 +86,18 @@ interface HarvestJob extends BaseJob<TASK_HARVEST> {
   workPartsNeeded: number;
 }
 
-interface BuilderTask extends BaseTask<TASK_BUILD> {
-  objectId: string; //Id<?>
+interface BuildTask extends BaseTask<TASK_BUILD> {
+  objectId: Id<ConstructionSite>;
+}
+
+interface BuildJob extends BaseJob<TASK_BUILD> {
+  objectId: Id<ConstructionSite>;
+}
+
+interface HarvestJob extends BaseJob<TASK_HARVEST> {
+  objectId: Id<Source | Deposit | Mineral<MineralConstant>>;
+  spotsAvailable: number;
+  workPartsNeeded: number;
 }
 
 interface TransferTask extends BaseTask<TASK_TRANSFER> {

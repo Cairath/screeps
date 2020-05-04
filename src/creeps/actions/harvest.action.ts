@@ -6,7 +6,7 @@ export const harvest = (
     return ACTION_ERR_FULL;
   }
 
-  const deposit = Game.getObjectById(task.objectId) as Source | Deposit | Mineral<MineralConstant>;
+  const deposit = Game.getObjectById(task.objectId);
   if (deposit === null) {
     return ACTION_ERR_NOT_FOUND;
   }
