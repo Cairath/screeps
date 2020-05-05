@@ -63,7 +63,7 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
     jobs.push(job);
   });
 
-  jobs = _.orderBy(jobs, (j: Job) => j.priority, "desc");
+  jobs = _.orderBy(jobs, (j: Job) => [j.priority, "workPartsNeeded"], ["desc", "desc"]);
 
   return jobs;
 }

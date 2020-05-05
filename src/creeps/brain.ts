@@ -1,24 +1,25 @@
-import { harvest } from "./actions/harvest.action";
-import { transfer } from "./actions/transfer.action";
-import { dropInPlace } from "./actions/drop-in-place.action";
-import { recycle } from "./actions/recycle.action";
 import _ from "lodash";
+import * as action from "./actions";
 
 export const act = (creep: Creep) => {
   const task = creep.memory.task;
   let result: ActionReturnCode = ACTION_CONT;
   switch (task.type) {
     case TASK_RECYCLE: {
-      result = recycle(creep, task);
+      result = action.recycle(creep, task);
+      break;
+    }
+    case TASK_RENEW: {
+      result = action.renew(creep, task);
       break;
     }
     case TASK_HARVEST: {
-      result = harvest(creep, task);
+      result = action.harvest(creep, task);
       // todo: if source is empty and has long time to renew left, possibly unassign the creep?
       break;
     }
     case TASK_TRANSFER: {
-      result = transfer(creep, task);
+      result = action.transfer(creep, task);
 
       if (result === ACTION_ERR_FULL) {
         result = ACTION_ERR_USE_FALLBACK;
@@ -27,7 +28,7 @@ export const act = (creep: Creep) => {
       break;
     }
     case TASK_DROP_IN_PLACE: {
-      result = dropInPlace(creep, task);
+      result = action.dropInPlace(creep, task);
       break;
     }
   }
