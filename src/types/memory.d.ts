@@ -10,6 +10,7 @@ interface RoomMemory {}
 interface CreepMemory {
   cluster: string;
   role: RoleConstant;
+  tier: number;
   task: CreepTask;
 }
 

@@ -106,16 +106,17 @@ export class ClusterManager {
         return;
       }
 
+      const name = `${nextSpawnRole}-${this.name}-${Game.time}${suffix++}`;
+      const tier = 2; // todo
+
       const opts: SpawnOptions = {
         memory: {
           role: nextSpawnRole,
+          tier: tier,
           cluster: this.name,
           task: { type: TASK_IDLE }
         }
       };
-
-      const name = `${nextSpawnRole}-${this.name}-${Game.time}${suffix++}`;
-      const tier = 2;
 
       if (spawn.spawnCreep(RoleBodyConfigurations[nextSpawnRole][tier], name, { ...opts, dryRun: true }) === OK) {
         spawn.spawnCreep(RoleBodyConfigurations[nextSpawnRole][tier], name, opts);
