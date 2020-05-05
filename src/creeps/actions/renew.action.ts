@@ -1,5 +1,4 @@
 export const renew = (creep: Creep, task: RenewTask): ACTION_DONE | ACTION_CONT | ACTION_ERR_NOT_FOUND => {
-  // todo: handle this nicer without creeps ganging up on one spawn and waiting too long
   const spawn = Game.getObjectById(task.spawnId);
 
   if (!spawn) {
