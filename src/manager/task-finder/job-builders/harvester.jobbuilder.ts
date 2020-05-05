@@ -3,13 +3,6 @@ import _ from "lodash";
 const MAX_WORKING_PARTS = 11;
 
 export function buildJobList(clusterInfo: ClusterInfo): Job[] {
-  /*
-  - find a source that has less than 10 work parts on it and still has a spot around it
-  - assign a HARVEST task, let the source know (? or when assigning? potentially need multiple tasks here?)
-  - assign a DROPENERGY task.next if source does not have its container
-  - assing a TRANSFER task.next if source has its container
-*/
-
   let jobs: Job[] = [];
   const sources = clusterInfo.sources;
   const minerals = clusterInfo.minerals;
@@ -71,8 +64,6 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
   });
 
   jobs = _.orderBy(jobs, (j: Job) => j.priority, "desc");
-
-  //  console.log("Harvester jobs: " + JSON.stringify(jobs, null, 2));
 
   return jobs;
 }

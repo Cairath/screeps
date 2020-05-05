@@ -1,12 +1,17 @@
 import { harvest } from "./actions/harvest.action";
 import { transfer } from "./actions/transfer.action";
 import { dropInPlace } from "./actions/drop-in-place.action";
+import { recycle } from "./actions/recycle.action";
 import _ from "lodash";
 
 export const act = (creep: Creep) => {
   const task = creep.memory.task;
   let result: ActionReturnCode = ACTION_CONT;
   switch (task.type) {
+    case TASK_RECYCLE: {
+      result = recycle(creep, task);
+      break;
+    }
     case TASK_HARVEST: {
       result = harvest(creep, task);
       // todo: if source is empty and has long time to renew left, possibly unassign the creep?
