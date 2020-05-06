@@ -130,19 +130,29 @@ export class ClusterManager {
 
   private recycleCreeps(requiredRecycling: RoleConstant[]) {
     const recycleRoleCount = _.countBy(requiredRecycling, (r: RoleConstant) => r);
+
     (Object.keys(recycleRoleCount) as RoleConstant[]).forEach((role: RoleConstant) => {
-      const roleCreeps = _.chain(Game.creeps)
+      const roleCreeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.role === role);
+      const creepsBeingRecycled = _.filter(
+        roleCreeps,
+        (creep: Creep) => creep.memory.task.type === TASK_RECYCLE || creep.memory.task.next?.type === TASK_RECYCLE
+      );
+
+      const numberToRecycle = recycleRoleCount[role] - creepsBeingRecycled.length;
+
+      if (numberToRecycle === 0) {
+        return;
+      }
+
+      const aliveRoleCreeps = _.chain(roleCreeps)
         .filter(
-          (creep: Creep) =>
-            creep.memory.role === role &&
-            creep.memory.task.type !== TASK_RECYCLE &&
-            creep.memory.task.next?.type !== TASK_RECYCLE
+          (creep: Creep) => creep.memory.task.type !== TASK_RECYCLE && creep.memory.task.next?.type !== TASK_RECYCLE
         )
         .orderBy((creep: Creep) => creep.ticksToLive, "asc")
         .value();
 
-      for (let i = 0; i < recycleRoleCount[role]; i++) {
-        const creepToRecycle = roleCreeps.shift();
+      for (let i = 0; i < numberToRecycle; i++) {
+        const creepToRecycle = aliveRoleCreeps.shift();
         if (!creepToRecycle) {
           continue;
         }
