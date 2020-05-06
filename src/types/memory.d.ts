@@ -18,7 +18,7 @@ interface HarvestableMemory {
   /**
    * Creeps currently assigned to harvest this harvestable.
    */
-  assignedCreeps: { [creepId: string]: HarvestableCreepAssignment };
+  assignedCreeps: { [creepName: string]: HarvestableCreepAssignment };
 }
 
 interface SourceMemory extends HarvestableMemory {}
@@ -27,7 +27,17 @@ interface DepositMemory extends HarvestableMemory {}
 
 interface MineralMemory extends HarvestableMemory {}
 
-interface StructureWithStoreMemory {}
+interface StructureWithStoreMemory {
+  /**
+   * List of en route deliveries to this store.
+   */
+  incomingDeliveries: { [creepName: string]: StoreReservation };
+
+  /**
+   * List of reserved resources in currently performed tasks.
+   */
+  outgoingReservations: { [creepName: string]: StoreReservation };
+}
 
 interface StorageMemory extends StructureWithStoreMemory {}
 

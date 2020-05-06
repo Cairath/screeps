@@ -7,7 +7,10 @@ Object.defineProperty(StructureLink.prototype, "memory", {
     if (!_.isObject(Memory.storages)) {
       return undefined;
     }
-    return (Memory.storages[this.id] = Memory.storages[this.id] ?? {});
+    return (Memory.storages[this.id] = Memory.storages[this.id] ?? {
+      incomingDeliveries: {},
+      outgoingReservations: {}
+    });
   },
   set: function (value: StorageMemory) {
     if (_.isUndefined(Memory.storages)) {

@@ -68,11 +68,11 @@ export const act = (creep: Creep) => {
       if (foundAnotherSource) {
         const currentSource = Game.getObjectById(task.objectId);
         if (currentSource instanceof Source) {
-          delete Memory.sources[currentSource.id].assignedCreeps[creep.id];
+          delete Memory.sources[currentSource.id].assignedCreeps[creep.name];
         } else if (currentSource instanceof Deposit) {
-          delete Memory.deposits[currentSource.id].assignedCreeps[creep.id];
+          delete Memory.deposits[currentSource.id].assignedCreeps[creep.name];
         } else if (currentSource instanceof Mineral) {
-          delete Memory.minerals[currentSource.id].assignedCreeps[creep.id];
+          delete Memory.minerals[currentSource.id].assignedCreeps[creep.name];
         }
       }
     }

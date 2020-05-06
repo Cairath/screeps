@@ -45,7 +45,7 @@ export class TaskFinder {
 
           const workParts = _.filter(creep.body, (body) => body.type === WORK).length;
 
-          Game.getObjectById<Source>(job.objectId)!.memory.assignedCreeps[creep.id] = {
+          Game.getObjectById(job.objectId)!.memory.assignedCreeps[creep.name] = {
             workParts: workParts
           };
 
