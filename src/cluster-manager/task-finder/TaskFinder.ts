@@ -1,21 +1,22 @@
 import _ from "lodash";
 import * as JobBuilder from "./job-builders";
+import { ClusterManager } from "cluster-manager/ClusterManager";
 
 export class TaskFinder {
-  private clusterInfo: ClusterInfo;
+  private clusterManager: ClusterManager;
   private parkSpot: RoomPosition;
 
   private harvesterJobBuilder: JobBuilder.HarvesterJobBuilder;
   private carrierJobBuilder: JobBuilder.CarrierJobBuilder;
   private builderJobBuilder: JobBuilder.BuilderJobBuilder;
 
-  constructor(cluster: ClusterInfo) {
-    this.clusterInfo = cluster;
-    this.parkSpot = new RoomPosition(19, 24, cluster.baseRoom); // todo: not hardcoded position
+  constructor(clusterManager: ClusterManager) {
+    this.clusterManager = clusterManager;
+    this.parkSpot = new RoomPosition(19, 24, clusterManager.baseRoom); // todo: not hardcoded position
 
-    this.harvesterJobBuilder = new JobBuilder.HarvesterJobBuilder(this.clusterInfo);
-    this.carrierJobBuilder = new JobBuilder.CarrierJobBuilder(this.clusterInfo);
-    this.builderJobBuilder = new JobBuilder.BuilderJobBuilder(this.clusterInfo);
+    this.harvesterJobBuilder = new JobBuilder.HarvesterJobBuilder(this.clusterManager);
+    this.carrierJobBuilder = new JobBuilder.CarrierJobBuilder(this.clusterManager);
+    this.builderJobBuilder = new JobBuilder.BuilderJobBuilder(this.clusterManager);
   }
 
   assignTasks() {
@@ -23,7 +24,7 @@ export class TaskFinder {
     const builderJobs = this.builderJobBuilder.buildJobList();
     const carrierJobs = this.carrierJobBuilder.buildJobList();
 
-    const creeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.cluster === this.clusterInfo.name);
+    const creeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.cluster === this.clusterManager.name);
 
     // todo: split meeeeee
     const harvesters = creeps.filter((creep: Creep) => creep.memory.role === ROLE_HARVESTER);

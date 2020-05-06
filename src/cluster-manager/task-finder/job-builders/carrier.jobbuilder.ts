@@ -1,13 +1,14 @@
+import { ClusterManager } from "cluster-manager";
 import _ from "lodash";
 import { JobBuilder } from "./JobBuilder";
 
 export class CarrierJobBuilder extends JobBuilder {
-  private clusterInfo: ClusterInfo;
+  private clusterManager: ClusterManager;
 
-  constructor(clusterInfo: ClusterInfo) {
+  constructor(clusterManager: ClusterManager) {
     super();
 
-    this.clusterInfo = clusterInfo;
+    this.clusterManager = clusterManager;
   }
 
   public buildJobList(): Job[] {

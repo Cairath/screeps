@@ -1,21 +1,29 @@
 import _ from "lodash";
 import { JobBuilder } from "./JobBuilder";
+import { ClusterManager } from "cluster-manager";
 
 const MAX_WORKING_PARTS = 11;
 
 export class HarvesterJobBuilder extends JobBuilder {
-  private clusterInfo: ClusterInfo;
-  private sources: { [sourceId: string]: string };
-  private minerals: { [mineralId: string]: string };
+  private clusterManager: ClusterManager;
+  private sources: { [sourceId: string]: string } = {};
+  private minerals: { [mineralId: string]: string } = {};
   private sourcesAndMinerals: { [harvestableId: string]: string };
 
-  constructor(clusterInfo: ClusterInfo) {
+  constructor(clusterManager: ClusterManager) {
     super();
 
-    this.clusterInfo = clusterInfo;
+    this.clusterManager = clusterManager;
 
-    this.sources = clusterInfo.sources;
-    this.minerals = clusterInfo.minerals;
+    // todo: handle additional rooms.
+    Game.rooms[clusterManager.baseRoom].sources.map((source: Source) => {
+      this.sources[source.id] = source.room.name;
+    });
+
+    Game.rooms[clusterManager.baseRoom].find(FIND_MINERALS).map((mineral: Mineral) => {
+      this.minerals[mineral.id] = mineral.room.name;
+    });
+
     this.sourcesAndMinerals = { ...this.sources, ...this.minerals };
   }
 

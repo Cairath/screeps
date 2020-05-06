@@ -1,39 +1,24 @@
 import { RoleBodyConfigurations } from "creeps/bodies";
 import _ from "lodash";
 import { TaskFinder } from "./task-finder/TaskFinder";
+import { StorageController } from "./storage-controller/StorageController";
 
 const RENEWAL_TICKS: number = 150;
 
 export class ClusterManager {
   name: string;
-  baseRoom: string;
-  taskFinder: TaskFinder; // main cluster room with spawns
+  baseRoom: string; // main cluster room with spawns
+  taskFinder: TaskFinder;
+  storageController: StorageController;
   // additionalRooms: string[] -- rooms to manage for mining resources. possibly a dictionary or a record of room name,
   // and specifying whether type of management (mining sources / minerals / both / something else???)
-
-  sources: { [sourceId: string]: string } = {};
-  minerals: { [mineralId: string]: string } = {};
 
   constructor(name: string, room: string) {
     this.name = name;
     this.baseRoom = room;
 
-    // todo: move this. handle additional rooms.
-
-    Game.rooms[this.baseRoom].sources.map((source: Source) => {
-      this.sources[source.id] = source.room.name;
-    });
-
-    Game.rooms[this.baseRoom].find(FIND_MINERALS).map((mineral: Mineral) => {
-      this.minerals[mineral.id] = mineral.room.name;
-    });
-
-    this.taskFinder = new TaskFinder({
-      name: this.name,
-      baseRoom: this.baseRoom,
-      sources: this.sources,
-      minerals: this.minerals
-    });
+    this.taskFinder = new TaskFinder(this);
+    this.storageController = new StorageController(this);
   }
 
   manage() {
