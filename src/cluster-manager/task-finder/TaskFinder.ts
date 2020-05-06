@@ -1,19 +1,27 @@
 import _ from "lodash";
-import * as TaskBuilder from "./job-builders";
+import * as JobBuilder from "./job-builders";
 
 export class TaskFinder {
   private clusterInfo: ClusterInfo;
   private parkSpot: RoomPosition;
 
+  private harvesterJobBuilder: JobBuilder.HarvesterJobBuilder;
+  private carrierJobBuilder: JobBuilder.CarrierJobBuilder;
+  private builderJobBuilder: JobBuilder.BuilderJobBuilder;
+
   constructor(cluster: ClusterInfo) {
     this.clusterInfo = cluster;
     this.parkSpot = new RoomPosition(19, 24, cluster.baseRoom); // todo: not hardcoded position
+
+    this.harvesterJobBuilder = new JobBuilder.HarvesterJobBuilder(this.clusterInfo);
+    this.carrierJobBuilder = new JobBuilder.CarrierJobBuilder(this.clusterInfo);
+    this.builderJobBuilder = new JobBuilder.BuilderJobBuilder(this.clusterInfo);
   }
 
   assignTasks() {
-    const harvesterJobs = TaskBuilder.BuildHarvesterJobList(this.clusterInfo);
-    const builderJobs = TaskBuilder.BuildBuilderJobList(this.clusterInfo);
-    const carrierJobs = TaskBuilder.BuildCarrierJobList(this.clusterInfo);
+    const harvesterJobs = this.harvesterJobBuilder.buildJobList();
+    const builderJobs = this.builderJobBuilder.buildJobList();
+    const carrierJobs = this.carrierJobBuilder.buildJobList();
 
     const creeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.cluster === this.clusterInfo.name);
 

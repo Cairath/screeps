@@ -108,7 +108,7 @@ export class ClusterManager {
       }
 
       const name = `${nextSpawnRole}-${this.name}-${Game.time}${suffix++}`;
-      const tier = 2; // todo
+      const tier = 0; // todo
 
       const opts: SpawnOptions = {
         memory: {
@@ -184,7 +184,7 @@ export class ClusterManager {
     // todo: actual calculations
     return {
       [ROLE_BUILDER]: 0,
-      [ROLE_HARVESTER]: 1,
+      [ROLE_HARVESTER]: 4,
       [ROLE_CARRIER]: 0
     };
   }
