@@ -2,7 +2,7 @@ import { RoleBodyConfigurations } from "creeps/bodies";
 import _ from "lodash";
 import { TaskFinder } from "./task-finder/TaskFinder";
 
-const RENEWAL_TICKS: number = 3;
+const RENEWAL_TICKS: number = 150;
 
 export class ClusterManager {
   name: string;
@@ -45,7 +45,8 @@ export class ClusterManager {
   private handleRenewalNeeds() {
     const creepsToRenew = _.filter(
       Game.creeps,
-      (creep: Creep) => !!creep.ticksToLive && creep.ticksToLive < RENEWAL_TICKS
+      (creep: Creep) =>
+        !!creep.ticksToLive && creep.ticksToLive < RENEWAL_TICKS && creep.memory.task.type !== TASK_RENEW
     );
 
     creepsToRenew.forEach((creep: Creep) => {
