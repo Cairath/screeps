@@ -18,6 +18,17 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
       return;
     }
 
+    if (harvestable instanceof Mineral) {
+      // todo: account for mineral's density
+      if (
+        harvestable.pos
+          .findInRange(FIND_MY_STRUCTURES, 0)
+          .filter((structure: AnyOwnedStructure) => structure.structureType === STRUCTURE_EXTRACTOR).length === 0
+      ) {
+        return;
+      }
+    }
+
     const availableSpots = harvestable.accessibleSpots - _.size(harvestable.memory.assignedCreeps);
 
     if (availableSpots < 1) {
@@ -30,28 +41,29 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
     }
 
     const containerId = harvestable.containerId;
-    let nextTask: CreepTask;
+    const resource = harvestable instanceof Source ? RESOURCE_ENERGY : harvestable.mineralType;
 
+    let nextTask: CreepTask;
     if (containerId) {
       nextTask = {
         type: TASK_TRANSFER,
         targetId: containerId,
-        resource: RESOURCE_ENERGY,
+        resource: resource,
         fallback: {
           type: TASK_DROP_IN_PLACE,
-          resource: RESOURCE_ENERGY
+          resource: resource
         }
       };
     } else {
       nextTask = {
         type: TASK_DROP_IN_PLACE,
-        resource: RESOURCE_ENERGY
+        resource: resource
       };
     }
 
     const job: HarvestJob = {
       type: TASK_HARVEST,
-      priority: PRIORITY_NORMAL,
+      priority: harvestable instanceof Source ? PRIORITY_NORMAL : PRIORITY_LOW,
       repeatable: true,
       objectId: harvestable.id,
       spotsAvailable: availableSpots,
@@ -62,7 +74,7 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
     jobs.push(job);
   });
 
-  jobs = _.orderBy(jobs, (j: Job) => [j.priority, "workPartsNeeded"], ["desc", "desc"]);
+  jobs = _.orderBy(jobs, [(j: Job) => j.priority, "workPartsNeeded"], ["desc", "desc"]);
 
   return jobs;
 }
