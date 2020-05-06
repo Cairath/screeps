@@ -109,9 +109,9 @@ interface HarvestJob extends BaseJob<TASK_HARVEST> {
 }
 
 interface TransferTask extends BaseTask<TASK_TRANSFER> {
-  objectId: string;
-  structureType: StructureConstant;
+  targetId: Id<Creep | PowerCreep | Structure<StructureConstant>>;
   resource: ResourceConstant;
+  amount?: number;
 }
 
 interface DropInPlaceTask extends BaseTask<TASK_DROP_IN_PLACE> {

@@ -7,11 +7,14 @@ export const harvest = (
     return ACTION_ERR_NOT_FOUND;
   }
 
-  const result = creep.harvest(deposit);
-  if (result === ERR_NOT_IN_RANGE) {
-    creep.moveTo(deposit, { visualizePathStyle: { stroke: "#ffaa00" } });
-  } else if (result === ERR_NOT_ENOUGH_RESOURCES) {
-    return ACTION_ERR_NOT_ENOUGH_RESOURCES;
+  switch (creep.harvest(deposit)) {
+    case ERR_NOT_IN_RANGE: {
+      creep.moveTo(deposit, { visualizePathStyle: { stroke: "#ffaa00" } });
+      break;
+    }
+    case ERR_NOT_ENOUGH_RESOURCES: {
+      return ACTION_ERR_NOT_ENOUGH_RESOURCES;
+    }
   }
 
   if (creep.isFull) {

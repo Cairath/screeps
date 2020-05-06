@@ -7,7 +7,7 @@ export class TaskFinder {
 
   constructor(cluster: ClusterInfo) {
     this.clusterInfo = cluster;
-    this.parkSpot = RoomPosition(19, 24, cluster.baseRoom); // todo: not hardcoded position
+    this.parkSpot = new RoomPosition(19, 24, cluster.baseRoom); // todo: not hardcoded position
   }
 
   assignTasks() {

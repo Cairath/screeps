@@ -35,9 +35,8 @@ export function buildJobList(clusterInfo: ClusterInfo): Job[] {
     if (containerId) {
       nextTask = {
         type: TASK_TRANSFER,
-        objectId: containerId,
+        targetId: containerId,
         resource: RESOURCE_ENERGY,
-        structureType: STRUCTURE_CONTAINER,
         fallback: {
           type: TASK_DROP_IN_PLACE,
           resource: RESOURCE_ENERGY
