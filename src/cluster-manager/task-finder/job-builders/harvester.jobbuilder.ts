@@ -28,6 +28,7 @@ export class HarvesterJobBuilder extends JobBuilder {
   }
 
   public buildJobList(): Job[] {
+    // todo: rewrite this for better handling type of the harvestable; add handling deposits
     let jobs: Job[] = [];
 
     // prioritize sources with containers?
@@ -50,13 +51,21 @@ export class HarvesterJobBuilder extends JobBuilder {
         }
       }
 
-      const availableSpots = harvestable.accessibleSpots - _.size(harvestable.memory.assignedCreeps);
+      const availableSpots =
+        harvestable instanceof Mineral
+          ? _.size(harvestable.memory.assignedCreeps) === 0
+            ? 1
+            : 0
+          : harvestable.accessibleSpots - _.size(harvestable.memory.assignedCreeps);
 
       if (availableSpots < 1) {
         return;
       }
 
-      const workingParts = _.sumBy(_.values(harvestable.memory.assignedCreeps), (v) => v.workParts);
+      const workingParts = _.sumBy(
+        _.values(harvestable.memory.assignedCreeps),
+        (v: HarvestableCreepAssignment) => v.workParts
+      );
       if (workingParts >= MAX_WORKING_PARTS) {
         return;
       }
