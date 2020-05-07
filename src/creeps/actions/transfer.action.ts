@@ -1,11 +1,11 @@
 export const transfer = (
   creep: Creep,
   task: TransferTask
-): ACTION_DONE | ACTION_CONT | ACTION_ERR_NOT_FOUND | ACTION_ERR_FULL => {
+): ACTION_DONE | ACTION_CONT | ACTION_ERR_NOT_FOUND | ACTION_ERR_USE_FALLBACK => {
   const target = Game.getObjectById(task.targetId);
 
   if (!target) {
-    return ACTION_ERR_NOT_FOUND;
+    return ACTION_ERR_USE_FALLBACK;
   }
 
   let amount = task.amount;
@@ -24,11 +24,11 @@ export const transfer = (
       creep.moveTo(target);
       break;
     }
-    case ERR_FULL: {
-      return ACTION_ERR_FULL;
-    }
     case OK: {
       return ACTION_DONE;
+    }
+    default: {
+      return ACTION_ERR_USE_FALLBACK;
     }
   }
 

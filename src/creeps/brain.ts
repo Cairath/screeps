@@ -20,11 +20,6 @@ export const act = (creep: Creep) => {
     }
     case TASK_TRANSFER: {
       result = action.transfer(creep, task);
-
-      if (result === ACTION_ERR_FULL) {
-        result = ACTION_ERR_USE_FALLBACK;
-      }
-
       break;
     }
     case TASK_DROP_IN_PLACE: {
