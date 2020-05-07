@@ -26,18 +26,18 @@ interface Mineral extends Harvestable {
   room: Room;
 }
 
-interface StructureWithStore {
+interface StructureWithStore_DEPRECATED {
   storageMode: StorageModeConstant;
 }
 
-interface StructureContainer extends StructureWithStore {
+interface StructureContainer extends StructureWithStore_DEPRECATED {
   memory: ContainerMemory;
 }
 
-interface StructureLink extends StructureWithStore {
+interface StructureLink extends StructureWithStore_DEPRECATED {
   memory: LinkMemory;
 }
 
-interface StructureStorage extends StructureWithStore {
+interface StructureStorage extends StructureWithStore_DEPRECATED {
   memory: StorageMemory;
 }

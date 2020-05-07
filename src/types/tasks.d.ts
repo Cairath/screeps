@@ -51,6 +51,7 @@ type CreepTask =
   | HarvestTask
   | BuildTask
   | TransferTask
+  | WithdrawTask
   | DropInPlaceTask
   | IdleTask
   | ParkTask
@@ -85,11 +86,11 @@ interface BaseJob<T extends TaskConstant> {
 }
 
 interface HarvestTask extends BaseTask<TASK_HARVEST> {
-  objectId: Id<Source | Deposit | Mineral<MineralConstant>>;
+  objectId: Id<Source | Deposit | Mineral>;
 }
 
 interface HarvestJob extends BaseJob<TASK_HARVEST> {
-  objectId: Id<Source | Deposit | Mineral<MineralConstant>>;
+  objectId: Id<Source | Deposit | Mineral>;
   spotsAvailable: number;
   workPartsNeeded: number;
 }
@@ -103,13 +104,19 @@ interface BuildJob extends BaseJob<TASK_BUILD> {
 }
 
 interface HarvestJob extends BaseJob<TASK_HARVEST> {
-  objectId: Id<Source | Deposit | Mineral<MineralConstant>>;
+  objectId: Id<Source | Deposit | Mineral>;
   spotsAvailable: number;
   workPartsNeeded: number;
 }
 
 interface TransferTask extends BaseTask<TASK_TRANSFER> {
-  targetId: Id<Creep | PowerCreep | Structure<StructureConstant>>;
+  targetId: Id<Creep | PowerCreep | StructureWithStore>;
+  resource: ResourceConstant;
+  amount?: number;
+}
+
+interface WithdrawTask extends BaseTask<TASK_WITHDRAW> {
+  targetId: Id<Tombstone | Ruin | StructureWithStore>;
   resource: ResourceConstant;
   amount?: number;
 }
