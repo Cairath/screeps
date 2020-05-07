@@ -1,8 +1,8 @@
-export const withdraw = (creep: Creep, task: WithdrawTask): ACTION_DONE | ACTION_CONT | ACTION_ERR_NOT_FOUND => {
+export const withdraw = (creep: Creep, task: WithdrawTask): ActionReturnCode => {
   const target = Game.getObjectById(task.targetId);
 
   if (!target) {
-    return ACTION_ERR_NOT_FOUND;
+    return ACTION_ERR_DROP_TASK_LIST;
   }
 
   let amount = task.amount;
@@ -21,6 +21,10 @@ export const withdraw = (creep: Creep, task: WithdrawTask): ACTION_DONE | ACTION
       );
     }
 
+    if (creepSpace === 0 || targetResources === 0) {
+      return ACTION_ERR_DROP_TASK_LIST;
+    }
+
     amount = Math.min(creepSpace, targetResources, task.amount);
   }
 
@@ -32,7 +36,10 @@ export const withdraw = (creep: Creep, task: WithdrawTask): ACTION_DONE | ACTION
     case OK: {
       return ACTION_DONE;
     }
+    default: {
+      return ACTION_ERR_DROP_TASK_LIST;
+    }
   }
 
-  return ACTION_CONT;
+  return ACTION_IN_PROGRESS;
 };

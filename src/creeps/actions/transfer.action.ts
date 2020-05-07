@@ -1,7 +1,4 @@
-export const transfer = (
-  creep: Creep,
-  task: TransferTask
-): ACTION_DONE | ACTION_CONT | ACTION_ERR_NOT_FOUND | ACTION_ERR_USE_FALLBACK => {
+export const transfer = (creep: Creep, task: TransferTask): ActionReturnCode => {
   const target = Game.getObjectById(task.targetId);
 
   if (!target) {
@@ -32,5 +29,5 @@ export const transfer = (
     }
   }
 
-  return ACTION_CONT;
+  return ACTION_IN_PROGRESS;
 };

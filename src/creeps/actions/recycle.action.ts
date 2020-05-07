@@ -1,7 +1,7 @@
-export const recycle = (creep: Creep, task: RecycleTask): ACTION_DONE | ACTION_CONT | ACTION_ERR_NOT_FOUND => {
+export const recycle = (creep: Creep, task: RecycleTask): ActionReturnCode => {
   const spawn = Game.getObjectById(task.spawnId);
   if (spawn === null) {
-    return ACTION_ERR_NOT_FOUND;
+    return ACTION_ERR_MOVE_ON;
   }
 
   switch (spawn.recycleCreep(creep)) {
@@ -12,10 +12,7 @@ export const recycle = (creep: Creep, task: RecycleTask): ACTION_DONE | ACTION_C
     case OK: {
       return ACTION_DONE;
     }
-    default: {
-      return ACTION_ERR_NOT_FOUND; // todo: another return code for those cases
-    }
   }
 
-  return ACTION_CONT;
+  return ACTION_IN_PROGRESS;
 };

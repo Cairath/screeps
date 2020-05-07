@@ -1,8 +1,8 @@
-export const renew = (creep: Creep, task: RenewTask): ACTION_DONE | ACTION_CONT | ACTION_ERR_NOT_FOUND => {
+export const renew = (creep: Creep, task: RenewTask): ActionReturnCode => {
   const spawn = Game.getObjectById(task.spawnId);
 
   if (!spawn) {
-    return ACTION_ERR_NOT_FOUND;
+    return ACTION_ERR_MOVE_ON;
   }
 
   switch (spawn.renewCreep(creep)) {
@@ -10,14 +10,11 @@ export const renew = (creep: Creep, task: RenewTask): ACTION_DONE | ACTION_CONT 
       creep.moveTo(spawn);
       break;
     }
-    case ERR_BUSY: {
-      return ACTION_CONT;
-    }
   }
 
   if (creep.ticksToLive! > 1400) {
     return ACTION_DONE;
   }
 
-  return ACTION_CONT;
+  return ACTION_IN_PROGRESS;
 };
