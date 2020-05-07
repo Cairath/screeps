@@ -8,7 +8,9 @@ interface StoreReservation {
 }
 
 // workaround for actions targetting Structure with not all structures having a store
-interface StructureWithStore<TResource extends ResourceConstant = ResourceConstant, TUnlimited extends boolean = false>
-  extends Structure {
+interface StructureWithStoreDefinition<
+  TResource extends ResourceConstant = ResourceConstant,
+  TUnlimited extends boolean = false
+> extends Structure {
   store: Store<TResource, TUnlimited>;
 }

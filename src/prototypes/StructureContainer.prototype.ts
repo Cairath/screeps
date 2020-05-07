@@ -1,28 +1,3 @@
-Object.defineProperty(StructureContainer.prototype, "memory", {
-  configurable: true,
-  get: function (this: StructureContainer) {
-    if (_.isUndefined(Memory.storages)) {
-      Memory.storages = {};
-    }
-    if (!_.isObject(Memory.storages)) {
-      return undefined;
-    }
-    return (Memory.storages[this.id] = Memory.storages[this.id] ?? {
-      incomingDeliveries: {},
-      outgoingReservations: {}
-    });
-  },
-  set: function (value: StorageMemory) {
-    if (_.isUndefined(Memory.storages)) {
-      Memory.storages = {};
-    }
-    if (!_.isObject(Memory.storages)) {
-      throw new Error("Could not set container memory");
-    }
-    Memory.storages[this.id] = value;
-  }
-});
-
 Object.defineProperty(StructureContainer.prototype, "storageMode", {
   get: function (
     this: StructureContainer & { _storageMode: StorageModeConstant } & { memory: { storageMode: StorageModeConstant } }

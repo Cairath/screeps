@@ -1,28 +1,3 @@
-Object.defineProperty(StructureLink.prototype, "memory", {
-  configurable: true,
-  get: function (this: StructureLink) {
-    if (_.isUndefined(Memory.storages)) {
-      Memory.storages = {};
-    }
-    if (!_.isObject(Memory.storages)) {
-      return undefined;
-    }
-    return (Memory.storages[this.id] = Memory.storages[this.id] ?? {
-      incomingDeliveries: {},
-      outgoingReservations: {}
-    });
-  },
-  set: function (value: StorageMemory) {
-    if (_.isUndefined(Memory.storages)) {
-      Memory.storages = {};
-    }
-    if (!_.isObject(Memory.storages)) {
-      throw new Error("Could not set link memory");
-    }
-    Memory.storages[this.id] = value;
-  }
-});
-
 Object.defineProperty(StructureLink.prototype, "storageMode", {
   get: function (
     this: StructureLink & { _storageMode: StorageModeConstant } & { memory: { storageMode: StorageModeConstant } }

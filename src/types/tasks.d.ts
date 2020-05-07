@@ -110,13 +110,13 @@ interface HarvestJob extends BaseJob<TASK_HARVEST> {
 }
 
 interface TransferTask extends BaseTask<TASK_TRANSFER> {
-  targetId: Id<Creep | PowerCreep | StructureWithStore>;
+  targetId: Id<Creep | PowerCreep | StructureWithStoreDefinition>;
   resource: ResourceConstant;
   amount?: number;
 }
 
 interface WithdrawTask extends BaseTask<TASK_WITHDRAW> {
-  targetId: Id<Tombstone | Ruin | StructureWithStore>;
+  targetId: Id<Tombstone | Ruin | StructureWithStoreDefinition>;
   resource: ResourceConstant;
   amount?: number;
 }

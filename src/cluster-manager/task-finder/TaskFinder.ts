@@ -44,6 +44,7 @@ export class TaskFinder {
       switch (job.type) {
         case TASK_HARVEST: {
           // todo: split me tooooo
+          // todo: handle situation in which container appears while the repeatable task is running
           creep.memory.task = {
             type: TASK_HARVEST,
             repeatable: job.repeatable,

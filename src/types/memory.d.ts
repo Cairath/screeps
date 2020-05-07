@@ -2,7 +2,7 @@ interface Memory {
   sources: { [id: string]: SourceMemory };
   deposits: { [id: string]: DepositMemory };
   minerals: { [id: string]: MineralMemory };
-  storages: { [id: string]: StoreStructureMemory };
+  clusters: { [name: string]: ClusterMemory };
 }
 
 interface RoomMemory {}
@@ -27,7 +27,13 @@ interface DepositMemory extends HarvestableMemory {}
 
 interface MineralMemory extends HarvestableMemory {}
 
-interface StructureWithStoreMemory {
+interface ClusterMemory {
+  stores: { [storeId: string]: StoreMemory };
+}
+
+interface StoreMemory {
+  storageMode: StorageModeConstant;
+
   /**
    * List of en route deliveries to this store.
    */
@@ -38,11 +44,3 @@ interface StructureWithStoreMemory {
    */
   outgoingReservations: { [creepName: string]: StoreReservation };
 }
-
-interface StorageMemory extends StructureWithStoreMemory {}
-
-interface ContainerMemory extends StructureWithStoreMemory {}
-
-interface LinkMemory extends StructureWithStoreMemory {}
-
-type StoreStructureMemory = StorageMemory | ContainerMemory | LinkMemory;
