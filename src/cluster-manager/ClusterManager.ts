@@ -17,6 +17,10 @@ export class ClusterManager {
     this.name = name;
     this.baseRoom = room;
 
+    if (!Memory.clusters[name]) {
+      Memory.clusters[name] = { stores: {} };
+    }
+
     this.taskFinder = new TaskFinder(this);
     this.storageController = new StorageController(this);
   }

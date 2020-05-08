@@ -1,3 +1,6 @@
+import { Core } from "core";
+import _ from "lodash";
+
 Object.defineProperty(Source.prototype, "memory", {
   configurable: true,
   get: function (this: Source) {
@@ -53,7 +56,10 @@ Object.defineProperty(Source.prototype, "containerId", {
       this._containerId = container ? container.id : null;
 
       if (container) {
-        container.storageMode = STORAGE_MODE_EMPTY;
+        Core.getManagerForRoom(container.pos.roomName)?.storageController.setStorageMode(
+          container.id,
+          STORAGE_MODE_EMPTY
+        );
       }
     }
 

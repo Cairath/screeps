@@ -11,20 +11,24 @@ export class Core {
   public static init() {
     const managerConfigs = Config.CLUSTERS;
 
+    if (!Memory.clusters) {
+      Memory.clusters = {};
+    }
+
     managerConfigs.forEach((manager: { name: string; room: string }) =>
       this.managers.push(new ClusterManager(manager.name, manager.room))
     );
   }
 
-  public getManager(name: string): ClusterManager | undefined {
+  public static getManager(name: string): ClusterManager | undefined {
     return Core.managers.find((cm: ClusterManager) => cm.name === name);
   }
 
-  public getManagerForRoom(roomName: string): ClusterManager | undefined {
+  public static getManagerForRoom(roomName: string): ClusterManager | undefined {
     return Core.managers.find((cm: ClusterManager) => cm.baseRoom === roomName); // todo: handle additionalRooms
   }
 
-  public getStorageController(objectId: Id<Structure | Ruin | Tombstone>): StorageController | undefined {
+  public static getStorageController(objectId: Id<Structure | Ruin | Tombstone>): StorageController | undefined {
     const object = Game.getObjectById(objectId);
 
     if (!object || !object.room) {

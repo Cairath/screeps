@@ -18,4 +18,8 @@ export class BuilderJobBuilder extends JobBuilder {
 
     return jobs;
   }
+
+  protected findPriorityJobs(): Job[] {
+    return [];
+  }
 }
