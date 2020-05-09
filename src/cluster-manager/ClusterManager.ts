@@ -10,6 +10,10 @@ export class ClusterManager {
   baseRoom: string; // main cluster room with spawns
   taskFinder: TaskFinder;
   storageController: StorageController;
+
+  get creepsTier() {
+    return 0; // todo: actual calculations
+  }
   // additionalRooms: string[] -- rooms to manage for mining resources. possibly a dictionary or a record of room name,
   // and specifying whether type of management (mining sources / minerals / both / something else???)
 
@@ -21,11 +25,12 @@ export class ClusterManager {
       Memory.clusters[name] = { stores: {} };
     }
 
+    // todo ????
     this.taskFinder = new TaskFinder(this);
     this.storageController = new StorageController(this);
   }
 
-  manage() {
+  public manage() {
     this.handleRenewalNeeds();
     this.adjustCreepPopulation();
     this.taskFinder.assignTasks();
@@ -90,6 +95,7 @@ export class ClusterManager {
     const spawns = Game.rooms[this.baseRoom].find(FIND_MY_SPAWNS);
     let nextSpawnRole = requiredSpawns.shift();
     let suffix = 0;
+    const tier = this.creepsTier;
 
     spawns.forEach((spawn: StructureSpawn) => {
       if (!nextSpawnRole) {
@@ -97,7 +103,6 @@ export class ClusterManager {
       }
 
       const name = `${nextSpawnRole}-${this.name}-${Game.time}${suffix++}`;
-      const tier = 0; // todo
 
       const opts: SpawnOptions = {
         memory: {
@@ -173,8 +178,8 @@ export class ClusterManager {
     // todo: actual calculations
     return {
       [ROLE_BUILDER]: 0,
-      [ROLE_HARVESTER]: 4,
-      [ROLE_CARRIER]: 0
+      [ROLE_HARVESTER]: 2,
+      [ROLE_CARRIER]: 1
     };
   }
 }
