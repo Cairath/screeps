@@ -58,7 +58,7 @@ type CreepTask =
   | RecycleTask
   | RenewTask;
 
-type Job = HarvestJob | BuildJob;
+type Job = HarvestJob | BuildJob | WithdrawJob;
 
 type JobPriorityConstant = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
 type PRIORITY_HIGH = 2;
@@ -103,12 +103,6 @@ interface BuildJob extends BaseJob<TASK_BUILD> {
   objectId: Id<ConstructionSite>;
 }
 
-interface HarvestJob extends BaseJob<TASK_HARVEST> {
-  objectId: Id<Source | Deposit | Mineral>;
-  spotsAvailable: number;
-  workPartsNeeded: number;
-}
-
 interface TransferTask extends BaseTask<TASK_TRANSFER> {
   targetId: Id<Creep | PowerCreep | StructureWithStoreDefinition>;
   resource: ResourceConstant;
@@ -119,6 +113,12 @@ interface WithdrawTask extends BaseTask<TASK_WITHDRAW> {
   targetId: Id<Tombstone | Ruin | StructureWithStoreDefinition>;
   resource: ResourceConstant;
   amount?: number;
+}
+
+interface WithdrawJob extends BaseJob<TASK_WITHDRAW> {
+  objectId: Id<Tombstone | Ruin | StructureWithStoreDefinition>;
+  resource: ResourceConstant;
+  amount: number;
 }
 
 interface DropInPlaceTask extends BaseTask<TASK_DROP_IN_PLACE> {
