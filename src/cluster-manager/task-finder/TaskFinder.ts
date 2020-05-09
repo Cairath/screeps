@@ -92,9 +92,9 @@ export class TaskFinder {
   }
 
   private assignCarriers(creeps: Creep[]): void {
-    const jobs = this.harvesterJobBuilder.buildJobList();
+    let jobs = this.harvesterJobBuilder.buildJobList();
     const allCreeps = creeps.filter((creep: Creep) => creep.memory.role === ROLE_CARRIER);
-    const idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
+    let idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
     const idleNotEmptyCreeps = idleCreeps.filter((creep: Creep) => !creep.isEmpty);
 
     idleNotEmptyCreeps.forEach((creep: Creep) => {
@@ -120,9 +120,59 @@ export class TaskFinder {
         };
 
         creep.memory.task = transferTask;
+        _(idleCreeps).remove((c: Creep) => !c.isIdle);
         this.clusterManager.storageController.addIncomingDelivery(deliveryTarget, creep.id, resource, amount);
       });
     });
+
+    // re-filter to get out the creeps that just got an assignment
+    idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
+
+    while (idleCreeps.length > 0 && jobs.length > 0) {
+      const job = jobs[0];
+      switch (job.type) {
+        case TASK_WITHDRAW: {
+          const target = Game.getObjectById(job.objectId);
+          if (!target) {
+            return;
+          }
+
+          const closestIdleCreep = _(idleCreeps)
+            .orderBy((creep: Creep) => target.pos.findPathTo(creep).length)
+            .shift();
+
+          if (!closestIdleCreep) {
+            break;
+          }
+
+          const creepCapacity = closestIdleCreep.store.getFreeCapacity(job.resource);
+
+          const withdrawTask: WithdrawTask = {
+            type: TASK_WITHDRAW,
+            targetId: job.objectId,
+            resource: job.resource,
+            amount: creepCapacity
+            // next: job.nextTask // todo: will this ever have a next?
+          };
+
+          closestIdleCreep.memory.task = withdrawTask;
+          this.clusterManager.storageController.addOutgoingReservation(
+            target,
+            closestIdleCreep.id,
+            job.resource,
+            creepCapacity
+          );
+
+          job.amount -= creepCapacity;
+          if (job.amount <= 0) {
+            jobs.shift();
+          }
+
+          jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
+          _(idleCreeps).remove((c: Creep) => !c.isIdle);
+        }
+      }
+    }
   }
 
   private assignBuilders(creeps: Creep[]): void {

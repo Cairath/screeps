@@ -59,7 +59,7 @@ export class StorageController {
   }
 
   public addOutgoingReservation(
-    structure: StructureWithStoreDefinition | Creep | PowerCreep,
+    structure: StructureWithStoreDefinition | Ruin | Tombstone,
     creepId: Id<Creep | PowerCreep>,
     resource: ResourceConstant,
     amount: number

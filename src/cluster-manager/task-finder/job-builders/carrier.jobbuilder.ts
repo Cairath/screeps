@@ -58,7 +58,7 @@ export class CarrierJobBuilder extends JobBuilder {
       });
     });
 
-    jobs = _.orderBy(jobs, (j: Job) => j.priority, "desc");
+    jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
     console.log(JSON.stringify(jobs, null, 2));
     return jobs;
   }
