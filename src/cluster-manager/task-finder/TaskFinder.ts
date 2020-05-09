@@ -1,6 +1,7 @@
 import _ from "lodash";
 import * as JobBuilder from "./job-builders";
 import { ClusterManager } from "cluster-manager/ClusterManager";
+import * as storageUtils from "../storage-controller/utils";
 
 export class TaskFinder {
   private clusterManager: ClusterManager;
@@ -19,18 +20,31 @@ export class TaskFinder {
     this.builderJobBuilder = new JobBuilder.BuilderJobBuilder(this.clusterManager);
   }
 
-  assignTasks() {
-    const harvesterJobs = this.harvesterJobBuilder.buildJobList();
-    const builderJobs = this.builderJobBuilder.buildJobList();
-    const carrierJobs = this.carrierJobBuilder.buildJobList();
-
+  assignTasks(): void {
     const creeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.cluster === this.clusterManager.name);
 
-    // todo: split meeeeee
-    const harvesters = creeps.filter((creep: Creep) => creep.memory.role === ROLE_HARVESTER);
-    const idleHarvesters = harvesters.filter((creep: Creep) => creep.isIdle);
-    idleHarvesters.forEach((creep: Creep) => {
-      const job = harvesterJobs.length > 0 ? harvesterJobs[0] : null;
+    this.assignHarvesters(creeps);
+    this.assignBuilders(creeps);
+    this.assignCarriers(creeps);
+
+    const idleCreeps = creeps.filter((creep: Creep) => creep.isIdle);
+    idleCreeps.forEach((creep: Creep) => {
+      const task: ParkTask = {
+        type: TASK_PARK,
+        location: this.parkSpot
+      };
+
+      creep.memory.task = task;
+    });
+  }
+
+  private assignHarvesters(creeps: Creep[]): void {
+    const jobs = this.harvesterJobBuilder.buildJobList();
+    const allCreeps = creeps.filter((creep: Creep) => creep.memory.role === ROLE_HARVESTER);
+    const idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
+
+    idleCreeps.forEach((creep: Creep) => {
+      const job = jobs.length > 0 ? jobs[0] : null;
       if (!job) {
         const task: ParkTask = {
           type: TASK_PARK,
@@ -43,7 +57,6 @@ export class TaskFinder {
 
       switch (job.type) {
         case TASK_HARVEST: {
-          // todo: split me tooooo
           // todo: handle situation in which container appears while the repeatable task is running
           creep.memory.task = {
             type: TASK_HARVEST,
@@ -62,15 +75,57 @@ export class TaskFinder {
           job.spotsAvailable--;
           job.workPartsNeeded = -workParts;
           if (job.spotsAvailable === 0 || job.workPartsNeeded === 0) {
-            harvesterJobs.shift();
+            jobs.shift();
           }
 
           break;
         }
         default: {
-          console.log(`Attempted to assign ${job.type} task to ${creep.name} but its role cannot handle that.`);
+          console.log(
+            `Attempted to assign ${job.type} task to ${
+              creep.name
+            } but its role ${creep.memory.role.toUpperCase()} cannot handle that.`
+          );
         }
       }
     });
+  }
+
+  private assignCarriers(creeps: Creep[]): void {
+    const jobs = this.harvesterJobBuilder.buildJobList();
+    const allCreeps = creeps.filter((creep: Creep) => creep.memory.role === ROLE_CARRIER);
+    const idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
+    const idleNotEmptyCreeps = idleCreeps.filter((creep: Creep) => !creep.isEmpty);
+
+    idleNotEmptyCreeps.forEach((creep: Creep) => {
+      const creepResources = storageUtils.getResourcesInStore(creep.store);
+
+      (Object.keys(creepResources) as ResourceConstant[]).forEach((resource: ResourceConstant) => {
+        const amount = creepResources[resource];
+
+        if (!amount) {
+          return;
+        }
+
+        const deliveryTarget = this.clusterManager.storageController.getDeliveryTarget(creep, resource, amount);
+
+        if (!deliveryTarget) {
+          return;
+        }
+
+        const transferTask: TransferTask = {
+          type: TASK_TRANSFER,
+          targetId: deliveryTarget.id,
+          resource: resource
+        };
+
+        creep.memory.task = transferTask;
+        this.clusterManager.storageController.addIncomingDelivery(deliveryTarget, creep.id, resource, amount);
+      });
+    });
+  }
+
+  private assignBuilders(creeps: Creep[]): void {
+    // todo
   }
 }
