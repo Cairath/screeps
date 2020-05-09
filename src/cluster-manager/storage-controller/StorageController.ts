@@ -115,10 +115,24 @@ export class StorageController {
   }
 
   private initializeStoreMemory(objectId: string) {
+    const object = Game.getObjectById(objectId);
+
+    if (!object) {
+      console.log(
+        `[ERROR]: Attempted to initialize store memory for objectId ${objectId} but could not find the object in Game.`
+      );
+      return;
+    }
+
+    const storageMode =
+      object instanceof Tombstone || object instanceof Resource || object instanceof Ruin
+        ? STORAGE_MODE_EMPTY
+        : STORAGE_MODE_NORMAL;
     this.clusterMemory.stores[objectId] = {
-      storageMode: STORAGE_MODE_NORMAL,
+      storageMode: storageMode,
       incomingDeliveries: {},
       outgoingReservations: {}
+      // todo: store type of the store?
     };
   }
 }
