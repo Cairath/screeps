@@ -68,6 +68,14 @@ export class Core {
       }
     }
 
+    _.forEach(Memory.clusters, (clusterMemory: ClusterMemory) => {
+      _.forEach(Object.keys(clusterMemory.stores), (objectId: string) => {
+        if (!Game.getObjectById(objectId)) {
+          delete clusterMemory.stores[objectId];
+        }
+      });
+    });
+
     Core.managers.forEach((manager: ClusterManager) => manager.manage());
 
     for (const creepName in Game.creeps) {
