@@ -39,7 +39,7 @@ export class CarrierJobBuilder extends JobBuilder {
       const resourcesInStore = storageUtils.getResourcesInStore(store);
 
       (Object.keys(resourcesInStore) as ResourceConstant[]).forEach((resource: ResourceConstant) => {
-        const amount = resourcesInStore[resource];
+        const amount = this.clusterManager.storageController.getResourcesAfterOutgoingReservations(object, resource);
 
         if (!amount || amount < carryCapacitiesAtCurrentTier) {
           return;
@@ -47,8 +47,7 @@ export class CarrierJobBuilder extends JobBuilder {
 
         const withdrawJob: WithdrawJob = {
           type: TASK_WITHDRAW,
-          priority:
-            store.getFreeCapacity(resource) / store.getCapacity(resource) > 0.6 ? PRIORITY_HIGH : PRIORITY_NORMAL,
+          priority: PRIORITY_NORMAL,
           objectId: object.id,
           resource: resource,
           amount: amount
@@ -59,7 +58,6 @@ export class CarrierJobBuilder extends JobBuilder {
     });
 
     jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
-    console.log(JSON.stringify(jobs, null, 2));
     return jobs;
   }
 }

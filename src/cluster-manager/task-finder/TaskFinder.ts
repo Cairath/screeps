@@ -21,7 +21,10 @@ export class TaskFinder {
   }
 
   assignTasks(): void {
-    const creeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.cluster === this.clusterManager.name);
+    const creeps = _.filter(
+      Game.creeps,
+      (creep: Creep) => creep.memory.cluster === this.clusterManager.name && !creep.spawning
+    );
 
     this.assignHarvesters(creeps);
     this.assignBuilders(creeps);
@@ -92,7 +95,7 @@ export class TaskFinder {
   }
 
   private assignCarriers(creeps: Creep[]): void {
-    let jobs = this.harvesterJobBuilder.buildJobList();
+    let jobs = this.carrierJobBuilder.buildJobList();
     const allCreeps = creeps.filter((creep: Creep) => creep.memory.role === ROLE_CARRIER);
     let idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
     const idleNotEmptyCreeps = idleCreeps.filter((creep: Creep) => !creep.isEmpty);
@@ -120,13 +123,11 @@ export class TaskFinder {
         };
 
         creep.memory.task = transferTask;
-        _(idleCreeps).remove((c: Creep) => !c.isIdle);
-        this.clusterManager.storageController.addIncomingDelivery(deliveryTarget, creep.id, resource, amount);
+        this.clusterManager.storageController.addIncomingDelivery(deliveryTarget, creep.name, resource, amount);
       });
     });
-
     // re-filter to get out the creeps that just got an assignment
-    idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
+    idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle && !creep.isFull);
 
     while (idleCreeps.length > 0 && jobs.length > 0) {
       const job = jobs[0];
@@ -134,7 +135,8 @@ export class TaskFinder {
         case TASK_WITHDRAW: {
           const target = Game.getObjectById(job.objectId);
           if (!target) {
-            return;
+            jobs.shift();
+            break;
           }
 
           const closestIdleCreep = _(idleCreeps)
@@ -142,6 +144,7 @@ export class TaskFinder {
             .shift();
 
           if (!closestIdleCreep) {
+            jobs.shift();
             break;
           }
 
@@ -158,7 +161,7 @@ export class TaskFinder {
           closestIdleCreep.memory.task = withdrawTask;
           this.clusterManager.storageController.addOutgoingReservation(
             target,
-            closestIdleCreep.id,
+            closestIdleCreep.name,
             job.resource,
             creepCapacity
           );
@@ -169,7 +172,12 @@ export class TaskFinder {
           }
 
           jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
-          _(idleCreeps).remove((c: Creep) => !c.isIdle);
+          _.remove(idleCreeps, (c: Creep) => !c.isIdle);
+          console.log(JSON.stringify(idleCreeps));
+          break;
+        }
+        default: {
+          console.log(`Attempted to assign ${job.type} task to a CARRIER but the role cannot handle that.`);
         }
       }
     }
