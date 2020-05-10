@@ -4,11 +4,12 @@ import { resolve } from "dns";
 
 export class StorageController {
   private clusterManager: ClusterManager;
-  private clusterMemory: ClusterMemory;
+  private get clusterMemory(): ClusterMemory {
+    return Memory.clusters[this.clusterManager.name];
+  }
 
   constructor(clusterManager: ClusterManager) {
     this.clusterManager = clusterManager;
-    this.clusterMemory = Memory.clusters[this.clusterManager.name];
   }
 
   public setStorageMode(objectId: string, storageMode: StorageModeConstant): void {
@@ -60,29 +61,35 @@ export class StorageController {
   }
 
   public addIncomingDelivery(
-    structure: StructureWithStoreDefinition | Creep | PowerCreep,
+    structureId: Id<StructureWithStoreDefinition | Creep | PowerCreep>,
     creepName: string,
     resource: ResourceConstant,
     amount: number
   ): void {
-    this.getStoreMemory(structure.id).incomingDeliveries[creepName] = { amount: amount, resource: resource };
+    this.getStoreMemory(structureId).incomingDeliveries[creepName] = { amount: amount, resource: resource };
   }
 
-  public deleteIncomingDelivery(structure: StructureWithStoreDefinition, creepName: string): void {
-    delete this.getStoreMemory(structure.id).incomingDeliveries[creepName];
+  public deleteIncomingDelivery(
+    structureId: Id<StructureWithStoreDefinition | Creep | PowerCreep>,
+    creepName: string
+  ): void {
+    delete this.getStoreMemory(structureId).incomingDeliveries[creepName];
   }
 
   public addOutgoingReservation(
-    structure: StructureWithStoreDefinition | Ruin | Tombstone,
+    structureId: Id<StructureWithStoreDefinition | Ruin | Tombstone>,
     creepName: string,
     resource: ResourceConstant,
     amount: number
   ): void {
-    this.getStoreMemory(structure.id).outgoingReservations[creepName] = { amount: amount, resource: resource };
+    this.getStoreMemory(structureId).outgoingReservations[creepName] = { amount: amount, resource: resource };
   }
 
-  public deleteOutgoingReservation(structure: StructureWithStoreDefinition, creepName: string): void {
-    delete this.getStoreMemory(structure.id).outgoingReservations[creepName];
+  public deleteOutgoingReservation(
+    structureId: Id<StructureWithStoreDefinition | Ruin | Tombstone>,
+    creepName: string
+  ): void {
+    delete this.getStoreMemory(structureId).outgoingReservations[creepName];
   }
 
   public getDeliveryTarget(

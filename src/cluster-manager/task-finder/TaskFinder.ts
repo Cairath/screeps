@@ -111,7 +111,6 @@ export class TaskFinder {
         }
 
         const deliveryTarget = this.clusterManager.storageController.getDeliveryTarget(creep, resource, amount);
-
         if (!deliveryTarget) {
           return;
         }
@@ -123,9 +122,10 @@ export class TaskFinder {
         };
 
         creep.memory.task = transferTask;
-        this.clusterManager.storageController.addIncomingDelivery(deliveryTarget, creep.name, resource, amount);
+        this.clusterManager.storageController.addIncomingDelivery(deliveryTarget.id, creep.name, resource, amount);
       });
     });
+
     // re-filter to get out the creeps that just got an assignment
     idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle && !creep.isFull);
 
@@ -160,7 +160,7 @@ export class TaskFinder {
 
           closestIdleCreep.memory.task = withdrawTask;
           this.clusterManager.storageController.addOutgoingReservation(
-            target,
+            target.id,
             closestIdleCreep.name,
             job.resource,
             creepCapacity

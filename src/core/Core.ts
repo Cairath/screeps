@@ -28,7 +28,9 @@ export class Core {
     return Core.managers.find((cm: ClusterManager) => cm.baseRoom === roomName); // todo: handle additionalRooms
   }
 
-  public static getStorageController(objectId: Id<Structure | Ruin | Tombstone>): StorageController | undefined {
+  public static getStorageController(
+    objectId: Id<Structure | Ruin | Tombstone | Creep | PowerCreep>
+  ): StorageController | undefined {
     const object = Game.getObjectById(objectId);
 
     if (!object || !object.room) {

@@ -1,8 +1,10 @@
 import _ from "lodash";
 import * as action from "./actions";
+import { Core } from "core";
 
 export const act = (creep: Creep) => {
   const task = creep.memory.task;
+  creep.say(task.type);
   let result: ActionReturnCode;
   switch (task.type) {
     case TASK_IDLE: {
@@ -81,7 +83,9 @@ export const act = (creep: Creep) => {
       break;
     }
   }
+
   cleanUpHarvesterAssignments(creep, task, newTask);
+  cleanUpStoreReservationAssignments(creep, task);
   creep.memory.task = newTask;
 };
 
@@ -120,5 +124,17 @@ const cleanUpHarvesterAssignments = (creep: Creep, task: CreepTask, newTask: Cre
         delete Memory.minerals[currentSource.id].assignedCreeps[creep.name];
       }
     }
+  }
+};
+
+const cleanUpStoreReservationAssignments = (creep: Creep, task: CreepTask) => {
+  if (task.type === TASK_TRANSFER) {
+    Core.getStorageController(task.targetId)?.deleteIncomingDelivery(task.targetId, creep.name);
+    return;
+  }
+
+  if (task.type === TASK_WITHDRAW) {
+    Core.getStorageController(task.targetId)?.deleteOutgoingReservation(task.targetId, creep.name);
+    return;
   }
 };
