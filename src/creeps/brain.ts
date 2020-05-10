@@ -5,6 +5,10 @@ export const act = (creep: Creep) => {
   const task = creep.memory.task;
   let result: ActionReturnCode;
   switch (task.type) {
+    case TASK_IDLE: {
+      result = ACTION_IN_PROGRESS;
+      break;
+    }
     case TASK_RECYCLE: {
       result = action.recycle(creep, task);
       break;
@@ -18,12 +22,20 @@ export const act = (creep: Creep) => {
       // todo: if source is empty and has long time to renew left, possibly unassign the creep?
       break;
     }
+    case TASK_WITHDRAW: {
+      result = action.withdraw(creep, task);
+      break;
+    }
     case TASK_TRANSFER: {
       result = action.transfer(creep, task);
       break;
     }
     case TASK_DROP_IN_PLACE: {
       result = action.dropInPlace(creep, task);
+      break;
+    }
+    case TASK_PARK: {
+      result = action.park(creep, task);
       break;
     }
     default: {
