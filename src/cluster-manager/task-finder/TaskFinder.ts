@@ -173,7 +173,6 @@ export class TaskFinder {
 
           jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
           _.remove(idleCreeps, (c: Creep) => !c.isIdle);
-          console.log(JSON.stringify(idleCreeps));
           break;
         }
         default: {

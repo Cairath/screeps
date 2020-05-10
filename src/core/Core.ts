@@ -66,10 +66,10 @@ export class Core {
       }
     }
 
+    Core.managers.forEach((manager: ClusterManager) => manager.manage());
+
     for (const creepName in Game.creeps) {
       Game.creeps[creepName].act();
     }
-
-    Core.managers.forEach((manager: ClusterManager) => manager.manage());
   }
 }

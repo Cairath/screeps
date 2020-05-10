@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export const harvest = (creep: Creep, task: HarvestTask): ActionReturnCode => {
   const deposit = Game.getObjectById(task.objectId);
   if (deposit === null) {
@@ -11,7 +13,7 @@ export const harvest = (creep: Creep, task: HarvestTask): ActionReturnCode => {
     }
   }
 
-  if (creep.isFull) {
+  if (creep.store.energy + _.filter(creep.body, (body) => body.type === WORK).length * 2 >= creep.store.getCapacity()) {
     return ACTION_DONE;
   }
 
