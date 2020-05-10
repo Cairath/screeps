@@ -45,30 +45,44 @@ export class StorageController {
     );
   }
 
+  public getResourcesAfterOutgoingReservations(
+    structure: StructureWithStoreDefinition | Tombstone | Ruin,
+    resource: ResourceConstant
+  ): number {
+    // todo: is resource needed here?
+    return Math.max(
+      0,
+      structure.store.getUsedCapacity(resource) -
+        _(this.getStoreMemory(structure.id).outgoingReservations)
+          .values()
+          .sumBy((outgoing: StoreReservation) => outgoing.amount)
+    );
+  }
+
   public addIncomingDelivery(
     structure: StructureWithStoreDefinition | Creep | PowerCreep,
-    creepId: Id<Creep | PowerCreep>,
+    creepName: string,
     resource: ResourceConstant,
     amount: number
   ): void {
-    this.getStoreMemory(structure.id).incomingDeliveries[creepId] = { amount: amount, resource: resource };
+    this.getStoreMemory(structure.id).incomingDeliveries[creepName] = { amount: amount, resource: resource };
   }
 
-  public deleteIncomingDelivery(structure: StructureWithStoreDefinition, creepId: Id<Creep | PowerCreep>): void {
-    delete this.getStoreMemory(structure.id).incomingDeliveries[creepId];
+  public deleteIncomingDelivery(structure: StructureWithStoreDefinition, creepName: string): void {
+    delete this.getStoreMemory(structure.id).incomingDeliveries[creepName];
   }
 
   public addOutgoingReservation(
     structure: StructureWithStoreDefinition | Ruin | Tombstone,
-    creepId: Id<Creep | PowerCreep>,
+    creepName: string,
     resource: ResourceConstant,
     amount: number
   ): void {
-    this.getStoreMemory(structure.id).outgoingReservations[creepId] = { amount: amount, resource: resource };
+    this.getStoreMemory(structure.id).outgoingReservations[creepName] = { amount: amount, resource: resource };
   }
 
-  public deleteOutgoingReservation(structure: StructureWithStoreDefinition, creepId: Id<Creep | PowerCreep>): void {
-    delete this.getStoreMemory(structure.id).outgoingReservations[creepId];
+  public deleteOutgoingReservation(structure: StructureWithStoreDefinition, creepName: string): void {
+    delete this.getStoreMemory(structure.id).outgoingReservations[creepName];
   }
 
   public getDeliveryTarget(
@@ -100,6 +114,17 @@ export class StorageController {
       if (closestNotFullExtension) {
         return closestNotFullExtension;
       }
+    }
+
+    const closestNotFullContainerOrStorage = creepPos.findClosestByPath(FIND_STRUCTURES, {
+      filter: (structure: Structure) =>
+        (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE) &&
+        this.getStorageMode(structure.id) !== STORAGE_MODE_EMPTY &&
+        this.getAvailableSpaceAfterIncomingDeliveries(structure as StructureWithStoreDefinition, resource) > 0
+    }) as StructureWithStoreDefinition;
+
+    if (closestNotFullContainerOrStorage) {
+      return closestNotFullContainerOrStorage;
     }
 
     return undefined;
