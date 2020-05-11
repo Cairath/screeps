@@ -88,7 +88,7 @@ export const act = (creep: Creep) => {
     }
   }
 
-  cleanUpHarvesterAssignments(creep, task, newTask);
+  cleanUpHarvesterAssignments(creep, task, newTask, result);
   cleanUpStoreReservationAssignments(creep, task);
   creep.memory.task = newTask;
 };
@@ -104,10 +104,14 @@ const handleRepeatableTask = (task: CreepTask, newTask: CreepTask) => {
   }
 };
 
-const cleanUpHarvesterAssignments = (creep: Creep, task: CreepTask, newTask: CreepTask) => {
-  if (task.type === TASK_HARVEST && !task.repeatable) {
+const cleanUpHarvesterAssignments = (creep: Creep, task: CreepTask, newTask: CreepTask, result: ActionReturnCode) => {
+  if (task.type !== TASK_HARVEST) {
+    return;
+  }
+
+  let foundAnotherSource: boolean = false;
+  if (!task.repeatable) {
     let currTask: CreepTask | undefined = newTask;
-    let foundAnotherSource = false;
 
     while (currTask) {
       if (currTask.type === TASK_HARVEST && currTask.objectId !== task.objectId) {
@@ -117,16 +121,20 @@ const cleanUpHarvesterAssignments = (creep: Creep, task: CreepTask, newTask: Cre
 
       currTask = currTask.next;
     }
+  }
 
-    if (foundAnotherSource) {
-      const currentSource = Game.getObjectById(task.objectId);
-      if (currentSource instanceof Source) {
-        delete Memory.sources[currentSource.id].assignedCreeps[creep.name];
-      } else if (currentSource instanceof Deposit) {
-        delete Memory.deposits[currentSource.id].assignedCreeps[creep.name];
-      } else if (currentSource instanceof Mineral) {
-        delete Memory.minerals[currentSource.id].assignedCreeps[creep.name];
-      }
+  if (
+    foundAnotherSource ||
+    result === ACTION_ERR_DROP_TASK_LIST_AFTER_FALLBACK ||
+    result === ACTION_ERR_DROP_TASK_LIST
+  ) {
+    const currentSource = Game.getObjectById(task.objectId);
+    if (currentSource instanceof Source) {
+      delete Memory.sources[currentSource.id].assignedCreeps[creep.name];
+    } else if (currentSource instanceof Deposit) {
+      delete Memory.deposits[currentSource.id].assignedCreeps[creep.name];
+    } else if (currentSource instanceof Mineral) {
+      delete Memory.minerals[currentSource.id].assignedCreeps[creep.name];
     }
   }
 };
