@@ -47,7 +47,7 @@ export class CarrierJobBuilder extends JobBuilder {
 
         const withdrawJob: WithdrawJob = {
           type: TASK_WITHDRAW,
-          priority: PRIORITY_NORMAL,
+          priority: object instanceof Tombstone || object instanceof Ruin ? PRIORITY_HIGH : PRIORITY_NORMAL,
           objectId: object.id,
           resource: resource,
           amount: amount
@@ -58,6 +58,7 @@ export class CarrierJobBuilder extends JobBuilder {
     });
 
     jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
+    //  console.log(JSON.stringify(jobs, null, 2));
     return jobs;
   }
 }

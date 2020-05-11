@@ -1,6 +1,5 @@
 import { ClusterManager } from "cluster-manager";
 import _ from "lodash";
-import { resolve } from "dns";
 
 export class StorageController {
   private clusterManager: ClusterManager;
@@ -12,11 +11,15 @@ export class StorageController {
     this.clusterManager = clusterManager;
   }
 
-  public setStorageMode(objectId: string, storageMode: StorageModeConstant): void {
+  public ensureInStores(objectId: Id<StructureWithStoreDefinition | Tombstone | Ruin>) {
+    this.getStoreMemory(objectId);
+  }
+
+  public setStorageMode(objectId: Id<StructureWithStoreDefinition>, storageMode: StorageModeConstant): void {
     this.getStoreMemory(objectId).storageMode = storageMode;
   }
 
-  public getStorageMode(objectId: string): StorageModeConstant {
+  public getStorageMode(objectId: Id<StructureWithStoreDefinition>): StorageModeConstant {
     return this.getStoreMemory(objectId).storageMode;
   }
 
@@ -92,6 +95,7 @@ export class StorageController {
     delete this.getStoreMemory(structureId).outgoingReservations[creepName];
   }
 
+  // todo: do something with this cast hell
   public getDeliveryTarget(
     creep: Creep,
     resource: ResourceConstant,
@@ -126,7 +130,7 @@ export class StorageController {
     const closestNotFullContainerOrStorage = creepPos.findClosestByPath(FIND_STRUCTURES, {
       filter: (structure: Structure) =>
         (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE) &&
-        this.getStorageMode(structure.id) !== STORAGE_MODE_EMPTY &&
+        this.getStorageMode((structure as StructureWithStoreDefinition).id) !== STORAGE_MODE_EMPTY &&
         this.getAvailableSpaceAfterIncomingDeliveries(structure as StructureWithStoreDefinition, resource) > 0
     }) as StructureWithStoreDefinition;
 

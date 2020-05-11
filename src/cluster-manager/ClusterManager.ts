@@ -33,6 +33,7 @@ export class ClusterManager {
   public manage() {
     this.handleRenewalNeeds();
     this.adjustCreepPopulation();
+    this.registerTombsAndRuinsInStorageController();
     this.taskFinder.assignTasks();
   }
 
@@ -178,8 +179,16 @@ export class ClusterManager {
     // todo: actual calculations
     return {
       [ROLE_BUILDER]: 0,
-      [ROLE_HARVESTER]: 2,
-      [ROLE_CARRIER]: 1
+      [ROLE_HARVESTER]: 1,
+      [ROLE_CARRIER]: 2
     };
+  }
+
+  private registerTombsAndRuinsInStorageController(): void {
+    // todo: handle additional rooms
+    Game.rooms[this.baseRoom].find(FIND_RUINS).forEach((ruin: Ruin) => this.storageController.ensureInStores(ruin.id));
+    Game.rooms[this.baseRoom]
+      .find(FIND_TOMBSTONES)
+      .forEach((tomb: Tombstone) => this.storageController.ensureInStores(tomb.id));
   }
 }
