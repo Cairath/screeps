@@ -7,6 +7,10 @@ interface StoreReservation {
   amount: number;
 }
 
+interface ResourceReservation {
+  amount: number;
+}
+
 // workaround for actions targetting Structure with not all structures having a store
 interface StructureWithStoreDefinition<
   TResource extends ResourceConstant = ResourceConstant,

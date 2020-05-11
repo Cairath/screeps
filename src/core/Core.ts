@@ -44,8 +44,6 @@ export class Core {
     for (const creepName in Memory.creeps) {
       if (!(creepName in Game.creeps)) {
         delete Memory.creeps[creepName];
-        // todo: also delete creep assignments, e.g. to sources, in case the creep died without properly dropping the task
-        // todo: also gc memory of all no longer existing structures
 
         _.forEach(Memory.sources, (memory: SourceMemory) => {
           delete memory.assignedCreeps[creepName];
@@ -72,6 +70,12 @@ export class Core {
       _.forEach(Object.keys(clusterMemory.stores), (objectId: string) => {
         if (!Game.getObjectById(objectId)) {
           delete clusterMemory.stores[objectId];
+        }
+      });
+
+      _.forEach(Object.keys(clusterMemory.looseResources), (objectId: string) => {
+        if (!Game.getObjectById(objectId)) {
+          delete clusterMemory.looseResources[objectId];
         }
       });
     });

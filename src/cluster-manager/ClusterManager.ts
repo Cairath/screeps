@@ -22,7 +22,7 @@ export class ClusterManager {
     this.baseRoom = room;
 
     if (!Memory.clusters[name]) {
-      Memory.clusters[name] = { stores: {} };
+      Memory.clusters[name] = { stores: {}, looseResources: {} };
     }
 
     // todo ????

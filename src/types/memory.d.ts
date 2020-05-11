@@ -29,6 +29,7 @@ interface MineralMemory extends HarvestableMemory {}
 
 interface ClusterMemory {
   stores: { [storeId: string]: StoreMemory };
+  looseResources: { [looseResourceId: string]: ResourceMemory };
 }
 
 interface StoreMemory {
@@ -43,4 +44,11 @@ interface StoreMemory {
    * List of reserved resources in currently performed tasks.
    */
   outgoingReservations: { [creepName: string]: StoreReservation };
+}
+
+interface ResourceMemory {
+  /**
+   * List of reserved resources in currently performed tasks.
+   */
+  outgoingReservations: { [creepName: string]: ResourceReservation };
 }
