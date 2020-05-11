@@ -138,12 +138,12 @@ const cleanUpStoreReservationAssignments = (creep: Creep, task: CreepTask) => {
   }
 
   if (task.type === TASK_WITHDRAW) {
-    Core.getStorageController(task.targetId)?.deleteOutgoingReservation(task.targetId, creep.name);
+    Core.getStorageController(task.targetId)?.deleteOutgoingStoreReservation(task.targetId, creep.name);
     return;
   }
 
   if (task.type === TASK_PICKUP) {
-    // todo
+    Core.getStorageController(task.targetId)?.deleteOutgoingResourceReservation(task.targetId, creep.name);
     return;
   }
 };

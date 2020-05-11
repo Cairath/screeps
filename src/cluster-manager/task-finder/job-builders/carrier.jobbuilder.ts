@@ -24,11 +24,30 @@ export class CarrierJobBuilder extends JobBuilder {
     const storesWithNormalMode = storageController.getStores(STORAGE_MODE_FILL);
     const storesWithoutEmptyMode = [...storesWithFillMode, ...storesWithNormalMode];
 
+    const looseResources = storageController.getLooseResources();
+
     const carryCapacitiesAtCurrentTier =
       _.filter(
         RoleBodyConfigurations.carrier[this.clusterManager.creepsTier],
         (part: BodyPartConstant) => part === CARRY
       ).length * CARRY_CAPACITY;
+
+    looseResources.forEach((looseRes: Resource) => {
+      const resourceAmount = storageController.getResourceAmountAfterOutgoingReservations(looseRes);
+      if (resourceAmount < 20) {
+        // todo: const for when to stop picking resources off the ground, mind decay
+        return;
+      }
+      const pickupJob: PickupJob = {
+        type: TASK_PICKUP,
+        priority: PRIORITY_HIGH,
+        objectId: looseRes.id,
+        resource: looseRes.resourceType,
+        amount: resourceAmount
+      };
+
+      jobs.push(pickupJob);
+    });
 
     storesWithEmptyMode.forEach((object: StructureWithStoreDefinition | Tombstone | Ruin) => {
       const store = object.store as StoreDefinition;

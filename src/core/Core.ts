@@ -29,7 +29,7 @@ export class Core {
   }
 
   public static getStorageController(
-    objectId: Id<Structure | Ruin | Tombstone | Creep | PowerCreep>
+    objectId: Id<Structure | Ruin | Tombstone | Creep | PowerCreep | Resource>
   ): StorageController | undefined {
     const object = Game.getObjectById(objectId);
 

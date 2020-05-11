@@ -159,7 +159,7 @@ export class TaskFinder {
           };
 
           closestIdleCreep.memory.task = withdrawTask;
-          this.clusterManager.storageController.addOutgoingReservation(
+          this.clusterManager.storageController.addOutgoingStoreReservation(
             target.id,
             closestIdleCreep.name,
             job.resource,
@@ -171,14 +171,55 @@ export class TaskFinder {
             jobs.shift();
           }
 
-          jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
-          _.remove(idleCreeps, (c: Creep) => !c.isIdle);
+          break;
+        }
+        case TASK_PICKUP: {
+          const target = Game.getObjectById(job.objectId);
+          if (!target) {
+            jobs.shift();
+            break;
+          }
+
+          const closestIdleCreep = _(idleCreeps)
+            .orderBy((creep: Creep) => target.pos.findPathTo(creep).length)
+            .shift();
+
+          if (!closestIdleCreep) {
+            jobs.shift();
+            break;
+          }
+
+          const creepCapacity = closestIdleCreep.store.getFreeCapacity(job.resource);
+
+          const pickupTask: PickupTask = {
+            type: TASK_PICKUP,
+            targetId: job.objectId,
+            resource: job.resource
+            // amount: creepCapacity
+            // next: job.nextTask // todo: will this ever have a next?
+          };
+
+          closestIdleCreep.memory.task = pickupTask;
+          this.clusterManager.storageController.addOutgoingResourceReservation(
+            target.id,
+            closestIdleCreep.name,
+            creepCapacity
+          );
+
+          job.amount -= creepCapacity;
+          if (job.amount <= 0) {
+            jobs.shift();
+          }
+
           break;
         }
         default: {
           console.log(`Attempted to assign ${job.type} task to a CARRIER but the role cannot handle that.`);
         }
       }
+
+      jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
+      _.remove(idleCreeps, (c: Creep) => !c.isIdle);
     }
   }
 

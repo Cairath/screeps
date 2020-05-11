@@ -186,9 +186,14 @@ export class ClusterManager {
 
   private registerTombsAndRuinsInStorageController(): void {
     // todo: handle additional rooms
-    Game.rooms[this.baseRoom].find(FIND_RUINS).forEach((ruin: Ruin) => this.storageController.ensureInStores(ruin.id));
+    Game.rooms[this.baseRoom]
+      .find(FIND_RUINS)
+      .forEach((ruin: Ruin) => this.storageController.ensureRegisteredInStorageController(ruin.id));
     Game.rooms[this.baseRoom]
       .find(FIND_TOMBSTONES)
-      .forEach((tomb: Tombstone) => this.storageController.ensureInStores(tomb.id));
+      .forEach((tomb: Tombstone) => this.storageController.ensureRegisteredInStorageController(tomb.id));
+    Game.rooms[this.baseRoom]
+      .find(FIND_DROPPED_RESOURCES)
+      .forEach((resource: Resource) => this.storageController.ensureRegisteredInStorageController(resource.id));
   }
 }
