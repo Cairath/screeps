@@ -28,6 +28,10 @@ export const act = (creep: Creep) => {
       result = action.withdraw(creep, task);
       break;
     }
+    case TASK_PICKUP: {
+      result = action.pickup(creep, task);
+      break;
+    }
     case TASK_TRANSFER: {
       result = action.transfer(creep, task);
       break;
@@ -135,6 +139,11 @@ const cleanUpStoreReservationAssignments = (creep: Creep, task: CreepTask) => {
 
   if (task.type === TASK_WITHDRAW) {
     Core.getStorageController(task.targetId)?.deleteOutgoingReservation(task.targetId, creep.name);
+    return;
+  }
+
+  if (task.type === TASK_PICKUP) {
+    // todo
     return;
   }
 };

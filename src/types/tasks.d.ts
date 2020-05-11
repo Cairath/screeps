@@ -2,6 +2,7 @@ declare const TASK_MOVE: TASK_MOVE;
 declare const TASK_HARVEST: TASK_HARVEST;
 declare const TASK_WITHDRAW: TASK_WITHDRAW;
 declare const TASK_TRANSFER: TASK_TRANSFER;
+declare const TASK_PICKUP: TASK_PICKUP;
 declare const TASK_BUILD: TASK_BUILD;
 declare const TASK_UPGRADE: TASK_UPGRADE;
 declare const TASK_DROP_IN_PLACE: TASK_DROP_IN_PLACE;
@@ -22,6 +23,7 @@ type TASK_MOVE = "move";
 type TASK_HARVEST = "harvest";
 type TASK_WITHDRAW = "withdraw";
 type TASK_TRANSFER = "transfer";
+type TASK_PICKUP = "pickup";
 type TASK_BUILD = "build";
 type TASK_REPAIR = "repair";
 type TASK_UPGRADE = "upgrade";
@@ -38,6 +40,7 @@ type TaskConstant =
   | TASK_HARVEST
   | TASK_WITHDRAW
   | TASK_TRANSFER
+  | TASK_PICKUP
   | TASK_BUILD
   | TASK_REPAIR
   | TASK_UPGRADE
@@ -52,13 +55,14 @@ type CreepTask =
   | BuildTask
   | TransferTask
   | WithdrawTask
+  | PickupTask
   | DropInPlaceTask
   | IdleTask
   | ParkTask
   | RecycleTask
   | RenewTask;
 
-type Job = HarvestJob | BuildJob | WithdrawJob;
+type Job = HarvestJob | BuildJob | WithdrawJob | PickupJob;
 
 type JobPriorityConstant = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
 type PRIORITY_HIGH = 2;
@@ -117,6 +121,17 @@ interface WithdrawTask extends BaseTask<TASK_WITHDRAW> {
 
 interface WithdrawJob extends BaseJob<TASK_WITHDRAW> {
   objectId: Id<Tombstone | Ruin | StructureWithStoreDefinition>;
+  resource: ResourceConstant;
+  amount: number;
+}
+
+interface PickupTask extends BaseTask<TASK_PICKUP> {
+  targetId: Id<Resource>;
+  resource: ResourceConstant;
+}
+
+interface PickupJob extends BaseJob<TASK_PICKUP> {
+  objectId: Id<Resource>;
   resource: ResourceConstant;
   amount: number;
 }
