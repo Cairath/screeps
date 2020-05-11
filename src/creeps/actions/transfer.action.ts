@@ -2,7 +2,7 @@ export const transfer = (creep: Creep, task: TransferTask): ActionReturnCode => 
   const target = Game.getObjectById(task.targetId);
 
   if (!target) {
-    return ACTION_ERR_USE_FALLBACK;
+    return ACTION_ERR_DROP_TASK_LIST_AFTER_FALLBACK;
   }
 
   let amount = task.amount;
