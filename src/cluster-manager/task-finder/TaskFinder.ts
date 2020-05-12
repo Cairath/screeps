@@ -182,7 +182,7 @@ export class TaskFinder {
 
           const closestIdleCreep = _(idleCreeps)
             .orderBy((creep: Creep) => target.pos.findPathTo(creep).length)
-            .shift();
+            .first();
 
           if (!closestIdleCreep) {
             jobs.shift();
@@ -213,12 +213,80 @@ export class TaskFinder {
 
           break;
         }
-        default: {
-          console.log(`Attempted to assign ${job.type} task to a CARRIER but the role cannot handle that.`);
+        case TASK_TRANSFER: {
+          const target = Game.getObjectById(job.targetId);
+          if (!target) {
+            jobs.shift();
+            break;
+          }
+
+          const withdrawTarget = this.clusterManager.storageController.getClosestWithdrawTarget(
+            target.pos,
+            job.resource
+          );
+          if (!withdrawTarget) {
+            jobs.shift();
+            break;
+          }
+
+          const closestIdleCreep = _(idleCreeps)
+            .orderBy((creep: Creep) => withdrawTarget.pos.findPathTo(creep).length)
+            .first();
+
+          if (!closestIdleCreep) {
+            jobs.shift();
+            break;
+          }
+
+          const creepCapacity = closestIdleCreep.store.getFreeCapacity(job.resource);
+          const resourceInStore = this.clusterManager.storageController.getResourcesAfterOutgoingReservations(
+            withdrawTarget,
+            job.resource
+          );
+
+          const taskResAmount = Math.min(creepCapacity, resourceInStore);
+
+          const withdrawTask: WithdrawTask = {
+            type: TASK_WITHDRAW,
+            targetId: withdrawTarget.id,
+            resource: job.resource,
+            amount: taskResAmount
+          };
+
+          const transferTask: TransferTask = {
+            type: TASK_TRANSFER,
+            targetId: job.targetId,
+            resource: job.resource,
+            amount: taskResAmount
+          };
+
+          withdrawTask.next = transferTask;
+
+          closestIdleCreep.memory.task = withdrawTask;
+          this.clusterManager.storageController.addOutgoingStoreReservation(
+            withdrawTarget.id,
+            closestIdleCreep.name,
+            job.resource,
+            taskResAmount
+          );
+
+          this.clusterManager.storageController.addIncomingDelivery(
+            job.targetId,
+            closestIdleCreep.name,
+            job.resource,
+            taskResAmount
+          );
+
+          job.amount -= taskResAmount;
+          if (job.amount <= 0) {
+            jobs.shift();
+          }
+
+          break;
         }
       }
 
-      jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
+      jobs = _.orderBy(jobs, [(j: CarrierJob) => j.priority, (j: CarrierJob) => j.amount], ["desc", "desc"]);
       _.remove(idleCreeps, (c: Creep) => !c.isIdle);
     }
   }

@@ -1,5 +1,6 @@
 import { ClusterManager } from "cluster-manager";
 import _ from "lodash";
+import { STORAGE_MODE_EMPTY } from "consts/tasks.consts";
 
 export class StorageController {
   private clusterManager: ClusterManager;
@@ -35,8 +36,7 @@ export class StorageController {
   ): Creep | PowerCreep | StructureWithStoreDefinition | undefined {
     const creepPos = creep.pos;
 
-    // todo: actually implement
-    const fillSpawnsAndExtensions = true;
+    const fillSpawnsAndExtensions = false;
     if (fillSpawnsAndExtensions && resource === RESOURCE_ENERGY) {
       const closestNotFullSpawn = creepPos.findClosestByPath(FIND_MY_STRUCTURES, {
         filter: (structure: Structure) =>
@@ -59,9 +59,13 @@ export class StorageController {
       }
     }
 
+    // todo: do this by what is registered in store memory
     const closestNotFullContainerOrStorage = creepPos.findClosestByPath(FIND_STRUCTURES, {
       filter: (structure: Structure) =>
-        (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE) &&
+        (structure.structureType === STRUCTURE_CONTAINER ||
+          structure.structureType === STRUCTURE_STORAGE ||
+          structure.structureType === STRUCTURE_SPAWN ||
+          structure.structureType === STRUCTURE_EXTENSION) &&
         this.getStorageMode((structure as StructureWithStoreDefinition).id) !== STORAGE_MODE_EMPTY &&
         this.getAvailableSpaceAfterIncomingDeliveries(structure as StructureWithStoreDefinition, resource) > 0
     }) as StructureWithStoreDefinition;
@@ -71,6 +75,20 @@ export class StorageController {
     }
 
     return undefined;
+  }
+
+  public getClosestWithdrawTarget(
+    pos: RoomPosition,
+    resource: ResourceConstant
+  ): StructureWithStoreDefinition | Tombstone | Ruin | undefined {
+    const notFillStores = [...this.getStores(STORAGE_MODE_EMPTY), ...this.getStores(STORAGE_MODE_NORMAL)];
+
+    const closest = _(notFillStores)
+      .filter((object) => this.getResourcesAfterOutgoingReservations(object, resource) > 0)
+      .orderBy((store) => store.pos.findPathTo(pos).length, "asc")
+      .first();
+
+    return closest;
   }
 
   /* Stores (cluster.stores) */
@@ -174,10 +192,15 @@ export class StorageController {
       return;
     }
 
-    const storageMode =
-      object instanceof Tombstone || object instanceof Resource || object instanceof Ruin
-        ? STORAGE_MODE_EMPTY
-        : STORAGE_MODE_NORMAL;
+    let storageMode: StorageModeConstant = STORAGE_MODE_NORMAL;
+    if (object instanceof Tombstone || object instanceof Resource || object instanceof Ruin) {
+      storageMode = STORAGE_MODE_EMPTY;
+    }
+
+    if (object instanceof StructureSpawn || object instanceof StructureExtension) {
+      storageMode = STORAGE_MODE_FILL;
+    }
+
     this.clusterMemory.stores[objectId] = {
       storageMode: storageMode,
       incomingDeliveries: {},

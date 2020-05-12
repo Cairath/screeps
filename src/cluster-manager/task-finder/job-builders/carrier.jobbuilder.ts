@@ -14,16 +14,13 @@ export class CarrierJobBuilder extends JobBuilder {
     this.clusterManager = clusterManager;
   }
 
-  public buildJobList(): Job[] {
-    let jobs: Job[] = [];
+  public buildJobList(): CarrierJob[] {
+    let jobs: CarrierJob[] = [];
 
     const storageController = this.clusterManager.storageController;
 
     const storesWithEmptyMode = storageController.getStores(STORAGE_MODE_EMPTY);
-    const storesWithFillMode = storageController.getStores(STORAGE_MODE_FILL);
-    const storesWithNormalMode = storageController.getStores(STORAGE_MODE_FILL);
-    const storesWithoutEmptyMode = [...storesWithFillMode, ...storesWithNormalMode];
-
+    const storesWithFillMode = storageController.getStores(STORAGE_MODE_FILL) as StructureWithStoreDefinition[];
     const looseResources = storageController.getLooseResources();
 
     const carryCapacitiesAtCurrentTier =
@@ -32,6 +29,7 @@ export class CarrierJobBuilder extends JobBuilder {
         (part: BodyPartConstant) => part === CARRY
       ).length * CARRY_CAPACITY;
 
+    /* Assigning loose resources */
     looseResources.forEach((looseRes: Resource) => {
       const resourceAmount = storageController.getResourceAmountAfterOutgoingReservations(looseRes);
       if (resourceAmount < 20) {
@@ -49,6 +47,7 @@ export class CarrierJobBuilder extends JobBuilder {
       jobs.push(pickupJob);
     });
 
+    /* Assigning stores to empty */
     storesWithEmptyMode.forEach((object: StructureWithStoreDefinition | Tombstone | Ruin) => {
       const store = object.store as StoreDefinition;
       if (store.getUsedCapacity() < carryCapacitiesAtCurrentTier) {
@@ -76,7 +75,32 @@ export class CarrierJobBuilder extends JobBuilder {
       });
     });
 
-    jobs = _.orderBy(jobs, [(j: Job) => j.priority, "amount"], ["desc", "desc"]);
+    /* Assigning stores to fill */
+    storesWithFillMode.forEach((object: StructureWithStoreDefinition) => {
+      const resource = RESOURCE_ENERGY; // todo: have buildings store their resource preferences
+
+      const availableSpace = this.clusterManager.storageController.getAvailableSpaceAfterIncomingDeliveries(
+        object,
+        resource
+      );
+
+      if (availableSpace <= 0) {
+        return;
+      }
+
+      const transferJob: TransferJob = {
+        type: TASK_TRANSFER,
+        priority:
+          object instanceof StructureSpawn || object instanceof StructureExtension ? PRIORITY_HIGH : PRIORITY_NORMAL,
+        targetId: object.id,
+        resource: resource,
+        amount: availableSpace
+      };
+
+      jobs.push(transferJob);
+    });
+
+    jobs = _.orderBy(jobs, [(j: CarrierJob) => j.priority, (j: CarrierJob) => j.amount], ["desc", "desc"]);
     //  console.log(JSON.stringify(jobs, null, 2));
     return jobs;
   }

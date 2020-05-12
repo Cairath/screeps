@@ -62,7 +62,8 @@ type CreepTask =
   | RecycleTask
   | RenewTask;
 
-type Job = HarvestJob | BuildJob | WithdrawJob | PickupJob;
+type Job = HarvestJob | BuildJob | WithdrawJob | PickupJob | TransferJob;
+type CarrierJob = WithdrawJob | TransferJob | PickupJob;
 
 type JobPriorityConstant = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
 type PRIORITY_HIGH = 2;
@@ -111,6 +112,12 @@ interface TransferTask extends BaseTask<TASK_TRANSFER> {
   targetId: Id<Creep | PowerCreep | StructureWithStoreDefinition>;
   resource: ResourceConstant;
   amount?: number;
+}
+
+interface TransferJob extends BaseJob<TASK_TRANSFER> {
+  targetId: Id<Creep | PowerCreep | StructureWithStoreDefinition>;
+  resource: ResourceConstant;
+  amount: number;
 }
 
 interface WithdrawTask extends BaseTask<TASK_WITHDRAW> {

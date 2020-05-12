@@ -33,7 +33,7 @@ export class ClusterManager {
   public manage() {
     this.handleRenewalNeeds();
     this.adjustCreepPopulation();
-    this.registerTombsAndRuinsInStorageController();
+    this.registerStoresInStorageController();
     this.taskFinder.assignTasks();
   }
 
@@ -184,7 +184,7 @@ export class ClusterManager {
     };
   }
 
-  private registerTombsAndRuinsInStorageController(): void {
+  private registerStoresInStorageController(): void {
     // todo: handle additional rooms
     Game.rooms[this.baseRoom]
       .find(FIND_RUINS)
@@ -195,5 +195,23 @@ export class ClusterManager {
     Game.rooms[this.baseRoom]
       .find(FIND_DROPPED_RESOURCES)
       .forEach((resource: Resource) => this.storageController.ensureRegisteredInStorageController(resource.id));
+    Game.rooms[this.baseRoom]
+      .find(FIND_STRUCTURES)
+      .filter(
+        (structure: Structure) =>
+          structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE
+      )
+      .forEach((structure: Structure) =>
+        this.storageController.ensureRegisteredInStorageController((structure as StructureWithStoreDefinition).id)
+      );
+    Game.rooms[this.baseRoom]
+      .find(FIND_MY_STRUCTURES)
+      .filter(
+        (structure: Structure) =>
+          structure.structureType === STRUCTURE_SPAWN || structure.structureType === STRUCTURE_EXTENSION
+      )
+      .forEach((structure: Structure) =>
+        this.storageController.ensureRegisteredInStorageController((structure as StructureWithStoreDefinition).id)
+      );
   }
 }
