@@ -64,6 +64,8 @@ type CreepTask =
 
 type Job = HarvestJob | BuildJob | WithdrawJob | PickupJob | TransferJob;
 type CarrierJob = WithdrawJob | TransferJob | PickupJob;
+type HarvesterJob = HarvestJob;
+type BuilderJob = BuildJob;
 
 type JobPriorityConstant = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
 type PRIORITY_HIGH = 2;

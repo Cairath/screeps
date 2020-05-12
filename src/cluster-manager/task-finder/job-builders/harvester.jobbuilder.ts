@@ -27,9 +27,9 @@ export class HarvesterJobBuilder extends JobBuilder {
     this.sourcesAndMinerals = { ...this.sources, ...this.minerals };
   }
 
-  public buildJobList(): Job[] {
+  public buildJobList(): HarvesterJob[] {
     // todo: rewrite this for better handling type of the harvestable; add handling deposits
-    let jobs: Job[] = [];
+    let jobs: HarvesterJob[] = [];
 
     // prioritize sources with containers?
     _.forEach(Object.keys(this.sourcesAndMinerals), (id: string) => {
@@ -104,7 +104,7 @@ export class HarvesterJobBuilder extends JobBuilder {
       jobs.push(job);
     });
 
-    jobs = _.orderBy(jobs, [(j: Job) => j.priority, "workPartsNeeded"], ["desc", "desc"]);
+    jobs = _.orderBy(jobs, [(j: HarvesterJob) => j.priority, (j: HarvesterJob) => j.workPartsNeeded], ["desc", "desc"]);
 
     return jobs;
   }

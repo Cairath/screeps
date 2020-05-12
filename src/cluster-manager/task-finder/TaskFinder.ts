@@ -42,7 +42,7 @@ export class TaskFinder {
   }
 
   private assignHarvesters(creeps: Creep[]): void {
-    const jobs = this.harvesterJobBuilder.buildJobList();
+    let jobs = this.harvesterJobBuilder.buildJobList();
     const allCreeps = creeps.filter((creep: Creep) => creep.memory.role === ROLE_HARVESTER);
     const idleCreeps = allCreeps.filter((creep: Creep) => creep.isIdle);
 
@@ -91,6 +91,11 @@ export class TaskFinder {
           );
         }
       }
+      jobs = _.orderBy(
+        jobs,
+        [(j: HarvesterJob) => j.priority, (j: HarvesterJob) => j.workPartsNeeded],
+        ["desc", "desc"]
+      );
     });
   }
 
