@@ -4,6 +4,7 @@ declare const TASK_WITHDRAW: TASK_WITHDRAW;
 declare const TASK_TRANSFER: TASK_TRANSFER;
 declare const TASK_PICKUP: TASK_PICKUP;
 declare const TASK_BUILD: TASK_BUILD;
+declare const TASK_REPAIR: TASK_REPAIR;
 declare const TASK_UPGRADE: TASK_UPGRADE;
 declare const TASK_DROP_IN_PLACE: TASK_DROP_IN_PLACE;
 declare const TASK_IDLE: TASK_IDLE;
@@ -53,6 +54,8 @@ type TaskConstant =
 type CreepTask =
   | HarvestTask
   | BuildTask
+  | UpgradeTask
+  | RepairTask
   | TransferTask
   | WithdrawTask
   | PickupTask
@@ -62,15 +65,17 @@ type CreepTask =
   | RecycleTask
   | RenewTask;
 
-type Job = HarvestJob | BuildJob | WithdrawJob | PickupJob | TransferJob;
+type Job = HarvestJob | BuildJob | WithdrawJob | PickupJob | TransferJob | RepairJob | UpgradeJob;
 type CarrierJob = WithdrawJob | TransferJob | PickupJob;
 type HarvesterJob = HarvestJob;
-type BuilderJob = BuildJob;
+type BuilderJob = BuildJob | RepairJob | UpgradeJob;
 
-type JobPriorityConstant = PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW;
-type PRIORITY_HIGH = 2;
-type PRIORITY_NORMAL = 1;
-type PRIORITY_LOW = 0;
+type JobPriorityConstant = PRIORITY_VERY_HIGH | PRIORITY_HIGH | PRIORITY_NORMAL | PRIORITY_LOW | PRIORITY_VERY_LOW;
+type PRIORITY_VERY_HIGH = 4;
+type PRIORITY_HIGH = 3;
+type PRIORITY_NORMAL = 2;
+type PRIORITY_LOW = 1;
+type PRIORITY_VERY_LOW = 0;
 
 type StorageModeConstant = STORAGE_MODE_EMPTY | STORAGE_MODE_FILL | STORAGE_MODE_NORMAL;
 type STORAGE_MODE_FILL = "fill";
@@ -103,11 +108,27 @@ interface HarvestJob extends BaseJob<TASK_HARVEST> {
 }
 
 interface BuildTask extends BaseTask<TASK_BUILD> {
-  objectId: Id<ConstructionSite>;
+  constructionSiteId: Id<ConstructionSite>;
 }
 
 interface BuildJob extends BaseJob<TASK_BUILD> {
-  objectId: Id<ConstructionSite>;
+  constructionSiteId: Id<ConstructionSite>;
+}
+
+interface RepairTask extends BaseTask<TASK_REPAIR> {
+  structureId: Id<Structure>;
+}
+
+interface RepairJob extends BaseJob<TASK_REPAIR> {
+  structureId: Id<Structure>;
+}
+
+interface UpgradeTask extends BaseTask<TASK_UPGRADE> {
+  controllerId: Id<StructureController>;
+}
+
+interface UpgradeJob extends BaseJob<TASK_UPGRADE> {
+  controllerId: Id<StructureController>;
 }
 
 interface TransferTask extends BaseTask<TASK_TRANSFER> {

@@ -1,8 +1,11 @@
+export { build } from "./build.action";
 export { dropInPlace } from "./drop-in-place.action";
 export { harvest } from "./harvest.action";
 export { park } from "./park.action";
 export { pickup } from "./pickup.action";
 export { recycle } from "./recycle.action";
 export { renew } from "./renew.action";
+export { repair } from "./repair.action";
 export { transfer } from "./transfer.action";
+export { upgrade } from "./upgrade.action";
 export { withdraw } from "./withdraw.action";

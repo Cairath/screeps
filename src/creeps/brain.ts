@@ -40,14 +40,26 @@ export const act = (creep: Creep) => {
       result = action.dropInPlace(creep, task);
       break;
     }
+    case TASK_BUILD: {
+      result = action.build(creep, task);
+      break;
+    }
+    case TASK_REPAIR: {
+      result = action.repair(creep, task);
+      break;
+    }
+    case TASK_UPGRADE: {
+      result = action.upgrade(creep, task);
+      break;
+    }
     case TASK_PARK: {
       result = action.park(creep, task);
       break;
     }
-    default: {
-      result = ACTION_ERR_DROP_TASK_LIST;
-      console.log(`Action for task ${task.type} is not implemented. Dropping the task.`);
-    }
+    // default: {
+    //   result = ACTION_ERR_DROP_TASK_LIST;
+    //   console.log(`Action for task ${task.type} is not implemented. Dropping the task.`);
+    // }
   }
 
   let newTask: CreepTask;
